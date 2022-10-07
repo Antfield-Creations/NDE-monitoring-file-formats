@@ -5,7 +5,9 @@ spec:
   data:
     common_crawl:
       index_file: data/collinfo-20221007.json
-      base_url: https://common-crawl.org
+      # url indices are available from june 2017 onwards
+      start_from: CC-MAIN-2017-26
+      url_index_download_template: https://data.commoncrawl.org/crawl-data/{crawl_entry}/cc-index.paths.gz
       download_dir: /media/rein/67ffb217-0f81-4c1a-8a43-b65b43d60738/@home/rein/NDE/Common-Crawl/
 
   models: []
