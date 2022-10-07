@@ -1,0 +1,9 @@
+spec:
+  run_id:
+
+  data:
+    common-crawl:
+      index-file: data/collinfo-20221007.json
+      base-url: https://common-crawl.org
+
+  models: []
