@@ -1,9 +1,11 @@
 spec:
+  # Leave blank to have the config loader generate a timestamp-based run id
   run_id:
 
   data:
-    common-crawl:
-      index-file: data/collinfo-20221007.json
-      base-url: https://common-crawl.org
+    common_crawl:
+      index_file: data/collinfo-20221007.json
+      base_url: https://common-crawl.org
+      download_dir: /media/rein/67ffb217-0f81-4c1a-8a43-b65b43d60738/@home/rein/NDE/Common-Crawl/
 
   models: []
