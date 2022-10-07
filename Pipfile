@@ -4,6 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+# For loading the config.yaml file
+"ruamel.yaml" = "*"
 
 [dev-packages]
 flake8 = "*"
