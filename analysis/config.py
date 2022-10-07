@@ -93,7 +93,5 @@ def load_config(
 
     if '~' in config_as_text:
         raise ValueError(f'Not all home-dir tildes "~" were substituted: \n{config_as_text}')
-    if '{' in config_as_text:
-        raise ValueError(f'Not all template values with "{{" were substituted: \n{config_as_text}')
 
     return config
