@@ -4,11 +4,6 @@ spec:
 
   data:
     common_crawl:
-      index_file: data/collinfo-20221007.json
-      # url indices are available from june 2017 onwards
-      start_from: CC-MAIN-2017-26
-      download_dir: /media/rein/67ffb217-0f81-4c1a-8a43-b65b43d60738/@home/rein/NDE/Common-Crawl/
-      url_index_download_template: https://data.commoncrawl.org/crawl-data/{crawl_entry}/cc-index.paths.gz
-      cdx_download_template: https://data.commoncrawl.org/{cdx_entry}
+      stats_url: https://raw.githubusercontent.com/commoncrawl/cc-crawl-statistics/master/plots/mimetypes_detected.csv
 
   models: []
