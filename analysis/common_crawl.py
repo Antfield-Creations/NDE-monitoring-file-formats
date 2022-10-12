@@ -1,3 +1,5 @@
+import datetime
+import gzip
 import json
 import logging
 from argparse import ArgumentParser
@@ -24,9 +26,11 @@ def analyse(root_url: str) -> Counter:
 
 
 if __name__ == '__main__':
+    start = datetime.datetime.now()
     parser = ArgumentParser('Performs the Common Crawl MIME type usage over time analysis')
     parser.add_argument('-c', '--config', default='config.yaml')
 
     args = parser.parse_args()
     config = load_config(args.config)
     main(config)
+    logging.info(f'Took {datetime.datetime.now() - start}')
