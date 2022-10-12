@@ -1,7 +1,8 @@
 import datetime
 import logging
-import urllib.request
 from argparse import ArgumentParser
+from typing import Dict, List, TypedDict
+from urllib.request import urlopen
 
 from analysis.config import load_config, Config
 
