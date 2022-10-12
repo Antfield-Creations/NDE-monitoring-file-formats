@@ -11,7 +11,8 @@ StatsDict = TypedDict('StatsDict',
                       {'crawl': str, 'mimetype_detected': str, 'pages': int, 'urls': int, 'pct_pages_per_crawl': float})
 StatsDictTable = List[StatsDict]
 
-def main(config: Config):
+
+def main(config: Config) -> None:
     crawl_cfg = config['data']['common_crawl']
 
     # Get the pre-aggregated statistics from the Common Crawl repository
