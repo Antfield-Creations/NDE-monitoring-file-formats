@@ -1,3 +1,4 @@
+import csv
 import datetime
 import logging
 from argparse import ArgumentParser
@@ -10,8 +11,15 @@ from analysis.config import load_config, Config
 def main(config: Config):
     crawl_cfg = config['data']['common_crawl']
 
-    with urllib.request.urlopen(crawl_cfg['stats_url']) as f:
-        stats = f.read()
+    # Get the pre-aggregated statistics from the Common Crawl repository
+    response = urlopen(crawl_cfg['stats_url'])
+    lines = [line.decode('utf-8') for line in response.readlines()]
+    contents = csv.DictReader(lines)
+    stats = [line for line in contents]
+
+    typed_stats = parse_csv(stats)
+    declining = filter_declining(typed_stats)
+    analyse(declining)
 
     print(stats)
 
