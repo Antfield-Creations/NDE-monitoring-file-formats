@@ -7,6 +7,9 @@ from urllib.request import urlopen
 
 from analysis.config import load_config, Config
 
+StatsDict = TypedDict('StatsDict',
+                      {'crawl': str, 'mimetype_detected': str, 'pages': int, 'urls': int, 'pct_pages_per_crawl': float})
+StatsDictTable = List[StatsDict]
 
 def main(config: Config):
     crawl_cfg = config['data']['common_crawl']
