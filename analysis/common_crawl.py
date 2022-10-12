@@ -7,7 +7,8 @@ from analysis.config import load_config, Config
 
 
 def main(config: Config):
-    with open(config['data']['common_crawl']['index_file'], 'rt') as f:
+    crawl_cfg = config['data']['common_crawl']
+    with open(crawl_cfg['index_file'], 'rt') as f:
         cc_roots = json.loads(f.read())
 
         for root in cc_roots:
