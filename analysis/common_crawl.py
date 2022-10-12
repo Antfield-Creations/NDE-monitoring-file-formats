@@ -25,7 +25,34 @@ def main(config: Config) -> None:
     declining = filter_declining(typed_stats)
     analyse(declining)
 
-    print(stats)
+
+def parse_csv(stats: List[Dict[str, str]]) -> StatsDictTable:
+    """
+    Converts str dict values to types appropriate for the StatsDictTable format.
+
+    :param stats: A list of raw Common Crawl statistics csv values from a csv.DictReader
+
+    :return: A list of dictionaries with parsed string, int and float values
+    """
+    stats_dict = []
+    for row in stats:
+        stats_dict.append(StatsDict(
+            crawl=str(row['crawl']),
+            mimetype_detected=str(row['mimetype_detected']),
+            pages=int(row['pages']),
+            urls=int(row['urls']),
+            pct_pages_per_crawl=float(row['%pages/crawl']),
+        ))
+
+    return stats_dict
+
+
+def filter_declining(typed_stats: StatsDictTable) -> StatsDictTable:
+    return typed_stats
+
+
+def analyse(stats: StatsDictTable) -> None:
+    pass
 
 
 if __name__ == '__main__':
