@@ -108,6 +108,9 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
 
     mime_declines = sorted(mime_declines, key=lambda x: x['avg_increase'])
     logging.info(f'Largest declines: {json.dumps(mime_declines[0:10], indent=2)}')
+    logging.info('Declining mime types:')
+    logging.info(declining_mime_types)
+
     return declining_mime_types
 
 
