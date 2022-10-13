@@ -1,0 +1,5 @@
+Bass_new_adopters.svg: https://en.wikipedia.org/wiki/Bass_diffusion_model\#/media/File:Bass_new_adopters.svg
+Anscombe's_quartet_3.svg: https://en.wikipedia.org/wiki/Anscombe%27s_quartet#/media/File:Anscombe's_quartet_3.svg
+data_points_with_noise.svg: afgeleid van https://en.wikipedia.org/wiki/Anscombe%27s_quartet#/media/File:Anscombe's_quartet_3.svg
+Floppy.stl: https://www.thingiverse.com/thing:1614896
+
