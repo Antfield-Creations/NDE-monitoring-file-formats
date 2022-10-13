@@ -80,7 +80,7 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
         declining_mime_types[row['mimetype_detected']].append({row['crawl']: row['pct_pages_per_crawl']})
 
     mime_types = list(declining_mime_types.keys())
-    mime_decline_slopes = []
+    mime_declines = []
 
     for mime_type in mime_types:
         crawl_stats = declining_mime_types[mime_type]
@@ -95,18 +95,19 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
 
         model = LinearRegression()
         num_crawls = 12
-        inputs = np.array(range(num_crawls)).reshape((num_crawls, 1))
         last_usage_percentages = window_averages[-num_crawls:]
-        model.fit(inputs, last_usage_percentages)
+        diffs = [pct[1] - pct[0] for pct in sliding_window_view(last_usage_percentages, 2)]
+        avg_increase = np.mean(diffs)
 
         # Now that we have fitted a simple regression line, the filter is simple: a positive coefficient means growth,
         # a negative number indicates decline
-        if model.coef_[0] >= 0:
+        if avg_increase >= 0:
             del declining_mime_types[mime_type]
         else:
-            mime_decline_slopes.append({'mime_type': mime_type, 'slope': model.coef_[0]})
-    mime_decline_slopes = sorted(mime_decline_slopes, key=lambda x: x['slope'])
-    logging.info(f'Largest declines: {json.dumps(mime_decline_slopes[0:10], indent=2)}')
+            mime_declines.append({'mime_type': mime_type, 'avg_increase': avg_increase})
+
+    mime_declines = sorted(mime_declines, key=lambda x: x['avg_increase'])
+    logging.info(f'Largest declines: {json.dumps(mime_declines[0:10], indent=2)}')
     return declining_mime_types
 
 
