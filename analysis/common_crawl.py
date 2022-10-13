@@ -5,6 +5,9 @@ from argparse import ArgumentParser
 from typing import Dict, List, TypedDict
 from urllib.request import urlopen
 
+import numpy as np
+from numpy.lib.stride_tricks import sliding_window_view
+
 from analysis.config import load_config, Config
 
 StatsDict = TypedDict('StatsDict',
@@ -64,10 +67,25 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
 
     # First: "de-normalize" the table into a nested dictionary of mime types with page counts per crawl
     # This is easier to handle: we want to analyse statistics per mime type, over the years
-    mime_types = set([stat['mimetype_detected'] for stat in typed_stats])
-    for row in typed_stats:
-        declining_mime_types.setdefault(row['mimetype_detected'], 0)
-        declining_mime_types[row['mimetype_detected']] += row['pages']
+    mime_sorted_stats = sorted(typed_stats, key=lambda r: (r['mimetype_detected'], r['crawl']))
+
+    for row in mime_sorted_stats:
+        # Skip under-specified mime types
+        if row['mimetype_detected'] == '<unknown>' or row['mimetype_detected'] == '<other>':
+            continue
+
+        declining_mime_types.setdefault(row['mimetype_detected'], [])
+        declining_mime_types[row['mimetype_detected']].append({row['crawl']: row['pct_pages_per_crawl']})
+
+    for mime_type, craw_stats in declining_mime_types.items():
+        # Calculate window averages of three crawls over the crawl stats
+        stats_values = [list(stat.values())[0] for stat in craw_stats]
+        windows = sliding_window_view(stats_values, 3)
+        window_averages = [np.mean(window) for window in windows]
+
+        # Drop zero-values from mime types that are no longer used
+        while window_averages[-1] == 0.:
+            window_averages.pop()
 
     return declining_mime_types
 
