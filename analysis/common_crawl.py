@@ -1,5 +1,6 @@
 import csv
 import datetime
+import json
 import logging
 from argparse import ArgumentParser
 from typing import Dict, List, TypedDict
@@ -7,6 +8,7 @@ from urllib.request import urlopen
 
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
+from sklearn.linear_model import LinearRegression
 
 from analysis.config import load_config, Config
 
@@ -77,9 +79,13 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
         declining_mime_types.setdefault(row['mimetype_detected'], [])
         declining_mime_types[row['mimetype_detected']].append({row['crawl']: row['pct_pages_per_crawl']})
 
-    for mime_type, craw_stats in declining_mime_types.items():
+    mime_types = list(declining_mime_types.keys())
+    mime_decline_slopes = []
+
+    for mime_type in mime_types:
+        crawl_stats = declining_mime_types[mime_type]
         # Calculate window averages of three crawls over the crawl stats
-        stats_values = [list(stat.values())[0] for stat in craw_stats]
+        stats_values = [list(stat.values())[0] for stat in crawl_stats]
         windows = sliding_window_view(stats_values, 3)
         window_averages = [np.mean(window) for window in windows]
 
@@ -87,6 +93,20 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
         while window_averages[-1] == 0.:
             window_averages.pop()
 
+        model = LinearRegression()
+        num_crawls = 12
+        inputs = np.array(range(num_crawls)).reshape((num_crawls, 1))
+        last_usage_percentages = window_averages[-num_crawls:]
+        model.fit(inputs, last_usage_percentages)
+
+        # Now that we have fitted a simple regression line, the filter is simple: a positive coefficient means growth,
+        # a negative number indicates decline
+        if model.coef_[0] >= 0:
+            del declining_mime_types[mime_type]
+        else:
+            mime_decline_slopes.append({'mime_type': mime_type, 'slope': model.coef_[0]})
+    mime_decline_slopes = sorted(mime_decline_slopes, key=lambda x: x['slope'])
+    logging.info(f'Largest declines: {json.dumps(mime_decline_slopes[0:10], indent=2)}')
     return declining_mime_types
 
 
