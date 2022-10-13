@@ -6,6 +6,10 @@ name = "pypi"
 [packages]
 # For loading the config.yaml file
 "ruamel.yaml" = "*"
+# For calculating statistics
+numpy = "*"
+# For simple linear regression
+sklearn = "*"
 
 [dev-packages]
 flake8 = "*"
