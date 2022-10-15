@@ -17,7 +17,7 @@ def residual(m, p, q, t, sales):
     :param p:       Innovators coefficient
     :param q:       Imitators coefficient
     :param t:       Time
-    :param sales:   The actual sales value
+    :param sales:   The actual (expected) sales value
 
     :return: The difference between the calculated Bass function output and the actual provided sales figure
     """
@@ -37,18 +37,22 @@ def main() -> None:
     m, p, q = 60630, 0.03, 0.38
 
     # non-linear least square fitting
-    varfinal = leastsq(residual, np.array([m, p, q]), args=(t, sales))
+    optimal = leastsq(
+        func=residual,              # Function to evaluate
+        x0=np.array([m, p, q]),     # The starting estimate
+        args=(t, sales))            # Extra arguments to the function that are not part of the estimation
 
     # estimated coefficients
-    m = varfinal[0]
-    p = varfinal[1]
-    q = varfinal[2]
+    m = optimal[0]
+    p = optimal[1]
+    q = optimal[2]
 
     # sales plot (pdf)
     # time interpolation
     tp = np.linspace(1.0, 100.0, num=100) / 10
     cofactor = np.exp(-(p + q) * tp)
     sales_pdf = m * (((p + q) ** 2 / p) * cofactor) / (1 + (q / p) * cofactor) ** 2
+
     plt.plot(tp, sales_pdf, t, sales)
     plt.title('Sales pdf')
     plt.legend(['Fit', 'True'])
