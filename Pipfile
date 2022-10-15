@@ -10,6 +10,10 @@ name = "pypi"
 numpy = "*"
 # For simple linear regression
 sklearn = "*"
+# For fitting Bass diffusion model
+scipy = "*"
+# For plotting model graphs
+matplotlib = "*"
 
 [dev-packages]
 flake8 = "*"
