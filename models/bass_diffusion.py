@@ -1,4 +1,7 @@
 """
+Bass diffusion model, by Frank Bass, 1969. Allows you to project sales at specified times based on a sigmoidal-shaped
+cumulative function, parameterized by a market potential (m), an innovators factor (p), and an imitators factor (q).
+
 This module was adapted from
 https://github.com/NForouzandehmehr/Bass-Diffusion-model-for-short-life-cycle-products-sales-prediction/blob/master/bass.py
 """
