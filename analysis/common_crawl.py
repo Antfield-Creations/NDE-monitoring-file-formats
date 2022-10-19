@@ -7,6 +7,7 @@ from typing import Dict, List, TypedDict
 from urllib.request import urlopen
 
 import numpy as np
+from matplotlib import pyplot as plt
 from numpy.lib.stride_tricks import sliding_window_view
 
 from analysis.config import load_config, Config
@@ -34,7 +35,7 @@ def main(config: Config) -> int:
 
     typed_stats = parse_csv(stats)
     declining = filter_declining(typed_stats)
-    analyse(declining)
+    analyse(declining, config)
 
     logging.info(f'Script took {datetime.datetime.now() - start}')
     return 0
@@ -117,8 +118,13 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
     return declining_mime_types
 
 
-def analyse(stats: MimeDict) -> None:
-    pass
+def analyse(stats: MimeDict, config: Config) -> None:
+    for mime_type in config['data']['commom_crawl']['mime_plots']:
+        values = [row.values() for row in stats[mime_type]]
+        plt.plot(values)
+        plt.title(mime_type)
+        plt.legend(['Pages'])
+        plt.show()
 
 
 if __name__ == '__main__':
