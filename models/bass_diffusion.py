@@ -21,14 +21,17 @@ class BassParameters:
 
 
 class BassDiffusionModel:
-    def __init__(self, m: int = 60630, p: float = 0.03, q: float = 0.38):
+    def __init__(self, m: int = None, p: float = None, q: float = None):
         """
         Initializes the Bass diffusion model parameters m, p and q with default (overridden if needed) values
         :param m:       Market potential coefficient
         :param p:       Innovators coefficient
         :param q:       Imitators coefficient
         """
-        self.m, self.p, self.q = m, p, q
+        if m is not None and p is not None and q is not None:
+            self.bass_parameters = BassParameters(float(m), float(p), float(q))
+        else:
+            self.bass_parameters = BassParameters()
 
     def sales_at_time(self, time: Union[int, float]) -> float:
         """
