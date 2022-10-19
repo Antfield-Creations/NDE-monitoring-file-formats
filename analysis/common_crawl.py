@@ -8,7 +8,6 @@ from urllib.request import urlopen
 
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
-from sklearn.linear_model import LinearRegression
 
 from analysis.config import load_config, Config
 
@@ -17,12 +16,14 @@ StatsDict = TypedDict('StatsDict',
 StatsDictTable = List[StatsDict]
 
 Crawl, PageCount = str, int
-MimeStats = Dict[Crawl, PageCount]
+MimeStats = Dict[str, int]
 MimeType = str
 MimeDict = Dict[MimeType, MimeStats]
 
 
-def main(config: Config) -> None:
+def main(config: Config) -> int:
+    start = datetime.datetime.now()
+
     crawl_cfg = config['data']['common_crawl']
 
     # Get the pre-aggregated statistics from the Common Crawl repository
@@ -34,6 +35,9 @@ def main(config: Config) -> None:
     typed_stats = parse_csv(stats)
     declining = filter_declining(typed_stats)
     analyse(declining)
+
+    logging.info(f'Script took {datetime.datetime.now() - start}')
+    return 0
 
 
 def parse_csv(stats: List[Dict[str, str]]) -> StatsDictTable:
@@ -65,7 +69,7 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
 
     :return: a dictionary of mime types with declining counts, with the count per year
     """
-    declining_mime_types = {}
+    declining_mime_types: dict = {}
 
     # First: "de-normalize" the table into a nested dictionary of mime types with page counts per crawl
     # This is easier to handle: we want to analyse statistics per mime type, over the years
@@ -93,7 +97,6 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
         while window_averages[-1] == 0.:
             window_averages.pop()
 
-        model = LinearRegression()
         num_crawls = 12
         last_usage_percentages = window_averages[-num_crawls:]
         diffs = [pct[1] - pct[0] for pct in sliding_window_view(last_usage_percentages, 2)]
@@ -119,11 +122,9 @@ def analyse(stats: MimeDict) -> None:
 
 
 if __name__ == '__main__':
-    start = datetime.datetime.now()
     parser = ArgumentParser('Performs the Common Crawl MIME type usage-over-time analysis')
     parser.add_argument('-c', '--config', default='config.yaml')
 
     args = parser.parse_args()
     config = load_config(args.config)
-    main(config)
-    logging.info(f'Took {datetime.datetime.now() - start}')
+    raise SystemExit(main(config))
