@@ -84,13 +84,18 @@ class BassDiffusionModel:
         :param sales:   numpy 1-dimensional array of sales matching with `times`
         :return:
         """
+        default_params = BassParameters()
+        # A start estimate of 100 times the max sales appears to be a reasonable value
+        initial_estimate_m = np.max(sales) * 100
+
         result: OptimizeResult = least_squares(
             # Distance function
             fun=BassDiffusionModel.residual,
             # Starting estimate
-            x0=np.array([1, 2, 3]),
+            x0=np.array([initial_estimate_m, default_params.p, default_params.q]),
             # Extra arguments to the function that are not part of the estimation
             args=(times, sales),
+            max_nfev=1000,
         )
 
         if result['status'] < 1:
