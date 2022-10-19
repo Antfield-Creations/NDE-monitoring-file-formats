@@ -75,14 +75,13 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
     # First: "de-normalize" the table into a nested dictionary of mime types with page counts per crawl
     # This is easier to handle: we want to analyse statistics per mime type, over the years
     mime_sorted_stats = sorted(typed_stats, key=lambda r: (r['mimetype_detected'], r['crawl']))
+    # Skip under-specified mime types
+    mime_sorted_stats = [row for row in mime_sorted_stats
+                         if row['mimetype_detected'] != '<unknown>' and row['mimetype_detected'] != '<other>']
 
     for row in mime_sorted_stats:
-        # Skip under-specified mime types
-        if row['mimetype_detected'] == '<unknown>' or row['mimetype_detected'] == '<other>':
-            continue
-
         declining_mime_types.setdefault(row['mimetype_detected'], [])
-        declining_mime_types[row['mimetype_detected']].append({row['crawl']: row['pct_pages_per_crawl']})
+        declining_mime_types[row['mimetype_detected']].append({row['crawl']: row['pages']})
 
     mime_types = list(declining_mime_types.keys())
     mime_declines = []
