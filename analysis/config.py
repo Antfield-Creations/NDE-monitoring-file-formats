@@ -22,7 +22,7 @@ def load_config(
     Loads 'config.yaml' from the current working directory, or somewhere else if specified
 
     :param path:    Path to the config yaml file
-    :param run_id:  Optional manual Id override for the run, mainly for testing
+    :param run_id:  Optional manual id override for the run, mainly for testing
     :param artifact_folder: Optional manual artifact folder override, mainly for testing
 
     :return: A Config object: a nested dictionary
