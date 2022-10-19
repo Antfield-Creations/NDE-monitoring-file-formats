@@ -33,18 +33,24 @@ class BassDiffusionModel:
         else:
             self.bass_parameters = BassParameters()
 
-    def sales_at_time(self, time: Union[int, float]) -> float:
+    @staticmethod
+    def sales_at_time(
+            bass_parameters: BassParameters, time: Union[int, float, np.ndarray]
+    ) -> Union[float, np.ndarray]:
         """
-        This function represents the Bass sales prediction function, calling it with a specified parameter time will
-        provide the projected sales at time `time`.
+        This function represents the Bass sales prediction function, calling it with a specified `time` will
+        provide the projected sales at `time`.
 
-        :param time: The time for which to make the Bass sales projection
+        :param bass_parameters: The parameters object of a Bass model, having properties m, p, and q
+        :param time:            The time for which to make the Bass sales projection, supplied as a positive number or
+                                numpy array of positive numbers
 
-        :return: The projected sales at time `time` as a single float value
+        :return: The projected sales at time `time` as a single float value or a numpy array of floats
         """
-        bass = self.m * (
-                ((self.p + self.q) ** 2 / self.p) * self.cofactor(time)
-        ) / (1 + (self.q / self.p) * self.cofactor(time)) ** 2
+        bass = bass_parameters.m * (
+                ((bass_parameters.p + bass_parameters.q) ** 2 / bass_parameters.p) *
+                BassDiffusionModel.cofactor(bass_parameters, time)
+        ) / (1 + (bass_parameters.q / bass_parameters.p) * BassDiffusionModel.cofactor(bass_parameters, time)) ** 2
 
         return bass
 
