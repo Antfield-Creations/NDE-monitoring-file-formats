@@ -5,11 +5,19 @@ cumulative function, parameterized by a market potential (m), an innovators fact
 This module was adapted from
 https://github.com/NForouzandehmehr/Bass-Diffusion-model-for-short-life-cycle-products-sales-prediction/blob/master/bass.py
 """
+from dataclasses import dataclass
 from typing import Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import leastsq
+from scipy.optimize import least_squares, OptimizeResult
+
+
+@dataclass
+class BassParameters:
+    m: Union[int, float] = 50000
+    p: float = 0.03
+    q: float = 0.38
 
 
 class BassDiffusionModel:
