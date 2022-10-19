@@ -54,36 +54,26 @@ class BassDiffusionModel:
 
         return bass
 
-    def sales_probability_distribution_function(self, times: np.ndarray) -> np.ndarray:
-        """
-        This is basically the vectorized version of self.sales_at_time. It allows you to project the sales for a
-        numpy array of times, returning an array of projected sales
+    @staticmethod
+    def cofactor(bass_parameters: BassParameters, time: Union[int, float, np.ndarray]) -> np.ndarray:
+        return np.exp(-(bass_parameters.p + bass_parameters.q) * time)
 
-        :param times: A numpy 1-dimensional array of times
-
-        :return: A numpy 1-dimensional array of projected sales
-        """
-        sales_pdf = self.m * (
-                ((self.p + self.q) ** 2 / self.p) * self.cofactor(times)
-        ) / (1 + (self.q / self.p) * self.cofactor(times)) ** 2
-
-        return sales_pdf
-
-    def cofactor(self, tp):
-        return np.exp(-(self.p + self.q) * tp)
-
-    def residual(self, time: int, expected_sales: int) -> float:
+    @staticmethod
+    def residual(bass_parameter_estimations: np.ndarray, time: int, expected_sales: int) -> float:
         """
         Residual error function that calculates the difference between the Bass model output given coefficients
         m, p, q at time `time` (see below) on the one hand and the actual sales figure on the other hand.
 
+        :param bass_parameter_estimations: Tuple of values m, p and q
         :param time:            A specific time
         :param expected_sales:  The actual (expected) sales value
 
         :return: The difference between the calculated Bass function output and the actual provided sales figure
         """
-        bass = self.sales_at_time(time)
-        return bass - expected_sales
+        parameters = BassParameters(*bass_parameter_estimations)
+        projected_sales = BassDiffusionModel.sales_at_time(parameters, time)
+
+        return projected_sales - expected_sales
 
     def fit(self, times: np.ndarray, sales: np.ndarray) -> None:
         """
@@ -94,35 +84,34 @@ class BassDiffusionModel:
         :param sales:   numpy 1-dimensional array of sales matching with `times`
         :return:
         """
-        optimal = leastsq(
-            func=self.residual,                         # Distance function
-            x0=np.array([self.m, self.p, self.q]),      # The starting estimate
-            args=(times, sales))            # Extra arguments to the function that are not part of the estimation
+        result: OptimizeResult = least_squares(
+            # Distance function
+            fun=BassDiffusionModel.residual,
+            # Starting estimate
+            x0=np.array([1, 2, 3]),
+            # Extra arguments to the function that are not part of the estimation
+            args=(times, sales),
+        )
+
+        if result['status'] < 1:
+            raise RuntimeError(f'Optimal parameters could not be found: {result["message"]}')
+
+        optimal = result['x']
 
         # update estimated coefficients
-        self.m = optimal[0]
-        self.p = optimal[1]
-        self.q = optimal[2]
+        self.bass_parameters.m = optimal[0]
+        self.bass_parameters.p = optimal[1]
+        self.bass_parameters.q = optimal[2]
 
-    def plot_sales_pdf(self, tp: np.ndarray) -> None:
-        # expected_sales plot (pdf)
-        # time interpolation
-        t = np.linspace(1.0, 10.0, num=10)
+    def plot_sales_pdf(self, times: np.ndarray, interpolated_times: np.ndarray, expected_sales: np.ndarray) -> None:
+        projected_sales = self.sales_at_time(self.bass_parameters, interpolated_times)
 
-        # time intervals
-        tp = np.linspace(1.0, 100.0, num=100) / 10
-
-        sales_pdf = self.sales_probability_distribution_function(tp)
-
-        # expected_sales vector
-        sales = np.array([840, 1470, 2110, 4000, 7590, 10950, 10530, 9470, 7790, 5890])
-
-        plt.plot(tp, sales_pdf, t, sales)
+        plt.plot(interpolated_times, projected_sales, times, expected_sales)
         plt.title('Sales pdf')
         plt.legend(['Fit', 'True'])
         plt.show()
 
-    def plot_sales_cdf(self):
+    def plot_sales_cdf(self) -> None:
         # time interpolation
         t = np.linspace(1.0, 10.0, num=10)
 
@@ -134,7 +123,10 @@ class BassDiffusionModel:
 
         # Cumulative expected_sales (cdf)
         cumulative_sales = np.cumsum(sales)
-        sales_cdf = self.m * (1 - self.cofactor(tp)) / (1 + (self.q / self.p) * self.cofactor(tp))
+        sales_cdf = self.bass_parameters.m * (
+            1 - self.cofactor(self.bass_parameters, tp)
+        ) / (1 + (self.bass_parameters.q / self.bass_parameters.p) * self.cofactor(self.bass_parameters, tp))
+
         plt.plot(tp, sales_cdf, t, cumulative_sales)
         plt.title('Sales cdf')
         plt.legend(['Fit', 'True'])
