@@ -2,6 +2,7 @@ import csv
 import datetime
 import json
 import logging
+import urllib.parse
 from argparse import ArgumentParser
 from typing import Dict, List, TypedDict
 from urllib.request import urlopen
@@ -11,6 +12,7 @@ from matplotlib import pyplot as plt
 from numpy.lib.stride_tricks import sliding_window_view
 
 from analysis.config import load_config, Config
+from models.bass_diffusion import BassDiffusionModel
 
 StatsDict = TypedDict('StatsDict',
                       {'crawl': str, 'mimetype_detected': str, 'pages': int, 'urls': int, 'pct_pages_per_crawl': float})
@@ -19,7 +21,7 @@ StatsDictTable = List[StatsDict]
 Crawl, PageCount = str, int
 MimeStats = Dict[str, int]
 MimeType = str
-MimeDict = Dict[MimeType, MimeStats]
+MimeDict = Dict[MimeType, List[MimeStats]]
 
 
 def main(config: Config) -> int:
@@ -116,11 +118,21 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
 
 
 def analyse(stats: MimeDict, config: Config) -> None:
-    for mime_type in config['data']['commom_crawl']['mime_plots']:
-        values = [row.values() for row in stats[mime_type]]
-        plt.plot(values)
-        plt.title(mime_type)
-        plt.legend(['Pages'])
+    for mime_type in config['data']['common_crawl']['mime_plots']:
+        values = [list(row.values())[0] for row in stats[mime_type]]
+
+        # Fit the Bass model
+        model = BassDiffusionModel()
+        times = np.array(range(len(values)))
+        model.fit(times=times, sales=np.array(values))
+
+        # Project Bass model "sales"
+        projected = model.sales_at_time(model.bass_parameters, times)
+
+        plt.plot(times, values, times, projected)
+        plt.title(f"Common Crawl pagina's per crawl voor {mime_type}")
+        plt.legend(["Pagina's", "Bass projectie"])
+        plt.savefig(f'images/{urllib.parse.quote_plus(mime_type)}.png')
         plt.show()
 
 
