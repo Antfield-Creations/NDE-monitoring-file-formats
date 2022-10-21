@@ -83,7 +83,10 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
 
     for row in mime_sorted_stats:
         declining_mime_types.setdefault(row['mimetype_detected'], [])
-        declining_mime_types[row['mimetype_detected']].append({row['crawl']: row['pages']})
+        usage_stat_ = str(config['data']['common_crawl']['usage_stat'])
+        declining_mime_types[row['mimetype_detected']].append(
+            {row['crawl']: row[usage_stat_]}  # type: ignore
+        )
 
     mime_types = list(declining_mime_types.keys())
     mime_declines = []
