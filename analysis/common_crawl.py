@@ -70,7 +70,7 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
 
     :param typed_stats: a list of dictionaries with typed values
 
-    :return: a dictionary of mime types with declining counts, with the count per year
+    :return: a dictionary of mime types with declining counts, with usage
     """
     declining_mime_types: dict = {}
 
