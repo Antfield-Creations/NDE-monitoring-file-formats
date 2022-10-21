@@ -4,7 +4,13 @@ spec:
 
   data:
     common_crawl:
+      # Source data url
       stats_url: https://raw.githubusercontent.com/commoncrawl/cc-crawl-statistics/master/plots/mimetypes_detected.csv
+      # Which statistic to use to calculate usage over time
+      usage_stat: urls
+      # The number of crawls to use as test data
+      num_test_crawls: 6
+      # Selection of mime types to use to generate usage and model plots
       mime_plots:
         - application/xhtml+xml
         - image/gif
