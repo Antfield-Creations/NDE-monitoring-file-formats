@@ -121,20 +121,37 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
 
 
 def analyse(stats: MimeDict, config: Config) -> None:
-    for mime_type in config['data']['common_crawl']['mime_plots']:
-        values = [list(row.values())[0] for row in stats[mime_type]]
+    # Extract out shorthand for long dict value
+    cc_cfg = config['data']['common_crawl']
+
+    for mime_type in cc_cfg['mime_plots']:
+        all_values = [list(row.values())[0] for row in stats[mime_type]]
+        all_times = np.array(range(len(all_values)))
+
+        # Extract out the index for the test crawls
+        test_crawls_idx = -cc_cfg['num_test_crawls']
+        train_values = all_values[:test_crawls_idx]
 
         # Fit the Bass model
         model = BassDiffusionModel()
-        times = np.array(range(len(values)))
-        model.fit(times=times, sales=np.array(values))
+        train_times = np.array(range(len(train_values)))
+        model.fit(times=train_times, sales=np.array(train_values))
 
         # Project Bass model "sales"
-        projected = model.sales_at_time(model.bass_parameters, times)
+        fitted_data = model.sales_at_time(model.bass_parameters, train_times)
+        test_times = all_times[test_crawls_idx:]
+        projected_data = model.sales_at_time(model.bass_parameters, test_times)
 
-        plt.plot(times, values, times, projected)
-        plt.title(f"Common Crawl pagina's per crawl voor {mime_type}")
-        plt.legend(["Pagina's", "Bass projectie"])
+        plt.plot(
+            # Actual values
+            all_times, all_values,
+            # Model projections from data that the model has seen
+            train_times, fitted_data,
+            # Model projections from data that the model has not seen
+            test_times, projected_data
+        )
+        plt.title(f"Common Crawl {cc_cfg['usage_stat']} per crawl voor {mime_type}")
+        plt.legend([cc_cfg['usage_stat'].capitalize(), "Bass model", "Bass test"])
         plt.savefig(f'images/{urllib.parse.quote_plus(mime_type)}.png')
         plt.show()
 
