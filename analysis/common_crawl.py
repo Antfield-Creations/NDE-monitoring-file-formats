@@ -4,7 +4,8 @@ import json
 import logging
 import urllib.parse
 from argparse import ArgumentParser
-from typing import Dict, List, TypedDict
+from statistics import mean
+from typing import Dict, List, TypedDict, Union
 from urllib.request import urlopen
 
 import numpy as np
