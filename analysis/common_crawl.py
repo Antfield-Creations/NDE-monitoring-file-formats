@@ -203,14 +203,24 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
             plt.plot(
                 # Actual values
                 all_times, usage_per_crawl,
-                # Model projections from data that the model has seen
-                train_times, fitted_data,
-                # Model projections from data that the model has not seen
-                test_times, projected_data
+                # Bass model predictions from data that the model has seen
+                bass_train_times, bass_fitted_values,
+                # Bass model predictions from data that the model has not seen
+                bass_test_times, bass_projected_values,
+                # Linear model predictions from data that the model has seen
+                linear_train_times, linear_fitted_values,
+                # Linear model predictions that the model has not yet seen
+                linear_test_times, linear_projected_values,
             )
             plt.xticks(all_times, year_labels)
             plt.title(f"Common Crawl {cc_cfg['usage_stat']} per crawl voor {mime_type}")
-            plt.legend([cc_cfg['usage_stat'].capitalize(), "Bass model", "Bass test"])
+            plt.legend([
+                cc_cfg['usage_stat'].capitalize(),
+                'Bass fit',
+                'Bass test',
+                'Lineair fit',
+                'Lineair test',
+            ])
             plt.savefig(f'images/{urllib.parse.quote_plus(mime_type)}.png')
             plt.show()
 
