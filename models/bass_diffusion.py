@@ -85,8 +85,9 @@ class BassDiffusionModel:
         :return:
         """
         default_params = BassParameters()
-        # A start estimate of 100 times the max sales appears to be a reasonable value
-        initial_estimate_m = np.max(sales) * 100
+        # A scaled start estimate of the max sales appears to be a reasonable value
+        initial_m_scale_factor = 10
+        initial_estimate_m = np.max(sales) * initial_m_scale_factor
 
         result: OptimizeResult = least_squares(
             # Distance function
