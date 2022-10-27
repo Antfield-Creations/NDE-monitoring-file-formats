@@ -143,9 +143,11 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
     # Extract out shorthand for long dict value
     cc_cfg = config['data']['common_crawl']
 
-    for mime_type in cc_cfg['mime_plots']:
-        all_values = [list(row.values())[0] for row in stats[mime_type]]
-        all_times = np.array(range(len(all_values)))
+    x_axis_labels = extract_years(collection_metadata)
+
+    for mime_type, usage_values in stats.items():
+        usage_per_crawl = [list(row.values())[0] for row in usage_values]
+        year_labels = x_axis_labels[-len(usage_per_crawl):]
 
         # Extract out the index for the test crawls
         test_crawls_idx = -cc_cfg['num_test_crawls']
