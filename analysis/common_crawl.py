@@ -29,6 +29,10 @@ def main(config: Config) -> int:
 
     crawl_cfg = config['data']['common_crawl']
 
+    # Get the collection metadata
+    with urlopen(crawl_cfg['collection_url']) as f:
+        coll_info = json.loads(f.read().decode('utf-8'))
+
     # Get the pre-aggregated statistics from the Common Crawl repository
     response = urlopen(crawl_cfg['stats_url'])
     lines = [line.decode('utf-8') for line in response.readlines()]
@@ -37,7 +41,7 @@ def main(config: Config) -> int:
 
     typed_stats = parse_csv(stats)
     declining = filter_declining(typed_stats)
-    analyse(declining, config)
+    analyse(declining, coll_info, config)
 
     logging.info(f'Script took {datetime.datetime.now() - start}')
     return 0
@@ -120,7 +124,22 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
     return declining_mime_types
 
 
-def analyse(stats: MimeDict, config: Config) -> None:
+def extract_years(collection_metadata: List[Dict[str, str]]) -> List[str]:
+    year_labels = []
+
+    for crawl in reversed(collection_metadata):
+        year = crawl['id'].split('-')[2]
+        if year not in year_labels:
+            year_labels.append(year)
+        else:
+            year_labels.append('')
+
+    year_labels[0] = ''
+
+    return year_labels
+
+
+def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: Config) -> None:
     # Extract out shorthand for long dict value
     cc_cfg = config['data']['common_crawl']
 
