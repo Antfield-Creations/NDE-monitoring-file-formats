@@ -23,6 +23,8 @@ MimeStats = Dict[str, int]
 MimeType = str
 MimeDict = Dict[MimeType, List[MimeStats]]
 
+ModelStats = List[Dict[str, Union[str, float]]]
+
 
 def main(config: Config) -> int:
     start = datetime.datetime.now()
@@ -41,7 +43,8 @@ def main(config: Config) -> int:
 
     typed_stats = parse_csv(stats)
     declining = filter_declining(typed_stats)
-    analyse(declining, coll_info, config)
+    model_stats = analyse(declining, coll_info, config)
+    logging.info(json.dumps(model_stats, indent=2))
 
     logging.info(f'Script took {datetime.datetime.now() - start}')
     return 0
@@ -139,7 +142,8 @@ def extract_years(collection_metadata: List[Dict[str, str]]) -> List[str]:
     return year_labels
 
 
-def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: Config) -> None:
+def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: Config) -> ModelStats:
+    error_stats: ModelStats = []
     # Extract out shorthand for long dict value
     cc_cfg = config['data']['common_crawl']
 
@@ -165,6 +169,28 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
         fitted_data = model.sales_at_time(model.bass_parameters, train_times)
         projected_data = model.sales_at_time(model.bass_parameters, test_times)
 
+        linear_model = LinearRegression()
+        linear_model.fit(X=linear_train_times, y=linear_train_values)
+        linear_fitted_values = linear_model.predict(linear_train_times)
+        linear_projected_values = linear_model.predict(linear_test_times)
+
+        # Calculate accuracy in average error
+        actual_test_values = list(usage_per_crawl[:test_crawls_idx])
+        assert type(actual_test_values) == list
+        assert type(bass_projected_values) == list
+
+        bass_error = [abs(actual - predicted) for actual, predicted
+                      in zip(actual_test_values, bass_projected_values)]
+        linear_error = [abs(actual - predicted) for actual, predicted
+                        in zip(actual_test_values, linear_projected_values)]
+
+        error_stats.append({
+            'mime_type': mime_type,
+            'bass_avg_test_error': mean(bass_error),
+            'linear_avg_test_error': mean(linear_error)
+        })
+
+        # Plot if marked so in configuration
         if mime_type in cc_cfg['mime_plots']:
             plt.plot(
                 # Actual values
