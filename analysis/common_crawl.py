@@ -224,6 +224,8 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
             plt.savefig(f'images/{urllib.parse.quote_plus(mime_type)}.png')
             plt.show()
 
+    return error_stats
+
 
 if __name__ == '__main__':
     parser = ArgumentParser('Performs the Common Crawl MIME type usage-over-time analysis')
