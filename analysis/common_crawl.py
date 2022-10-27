@@ -160,12 +160,12 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
         train_values = usage_per_crawl[:test_crawls_idx]
 
         all_times = np.array(range(len(usage_per_crawl)))
-        train_times = all_times[:test_crawls_idx]
-        test_times = all_times[test_crawls_idx:]
+        bass_train_times = all_times[:test_crawls_idx]
+        bass_test_times = all_times[test_crawls_idx:]
 
         # Fit the Bass model
-        model = BassDiffusionModel()
-        model.fit(times=train_times, sales=np.array(train_values))
+        bass_model = BassDiffusionModel()
+        bass_model.fit(times=bass_train_times, sales=np.array(train_values))
 
         # Project Bass model "sales"
         bass_fitted_values = bass_model.sales_at_time(bass_model.bass_parameters, bass_train_times)
