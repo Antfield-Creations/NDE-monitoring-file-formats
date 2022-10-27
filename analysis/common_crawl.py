@@ -10,6 +10,7 @@ from urllib.request import urlopen
 import numpy as np
 from matplotlib import pyplot as plt
 from numpy.lib.stride_tricks import sliding_window_view
+from sklearn.linear_model import LinearRegression
 
 from analysis.config import load_config, Config
 from models.bass_diffusion import BassDiffusionModel
@@ -166,8 +167,14 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
         model.fit(times=train_times, sales=np.array(train_values))
 
         # Project Bass model "sales"
-        fitted_data = model.sales_at_time(model.bass_parameters, train_times)
-        projected_data = model.sales_at_time(model.bass_parameters, test_times)
+        bass_fitted_values = bass_model.sales_at_time(bass_model.bass_parameters, bass_train_times)
+        bass_projected_values = bass_model.sales_at_time(bass_model.bass_parameters, bass_test_times)
+
+        # Constrain the linear model to only the values from the highest value onwards
+        max_idx = train_values.index(max(train_values))
+        linear_train_times = np.expand_dims(all_times[max_idx:test_crawls_idx], axis=1)
+        linear_train_values = usage_per_crawl[max_idx:test_crawls_idx]
+        linear_test_times = np.expand_dims(all_times[test_crawls_idx:], axis=1)
 
         linear_model = LinearRegression()
         linear_model.fit(X=linear_train_times, y=linear_train_values)
