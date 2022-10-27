@@ -151,7 +151,11 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
 
         # Extract out the index for the test crawls
         test_crawls_idx = -cc_cfg['num_test_crawls']
-        train_values = all_values[:test_crawls_idx]
+        train_values = usage_per_crawl[:test_crawls_idx]
+
+        all_times = np.array(range(len(usage_per_crawl)))
+        train_times = all_times[:test_crawls_idx]
+        test_times = all_times[test_crawls_idx:]
 
         # Fit the Bass model
         model = BassDiffusionModel()
