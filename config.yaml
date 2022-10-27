@@ -4,6 +4,8 @@ spec:
 
   data:
     common_crawl:
+      # Metadata url
+      collection_url: https://index.commoncrawl.org/collinfo.json
       # Source data url
       stats_url: https://raw.githubusercontent.com/commoncrawl/cc-crawl-statistics/master/plots/mimetypes_detected.csv
       # Which statistic to use to calculate usage over time
