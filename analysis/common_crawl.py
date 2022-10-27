@@ -165,18 +165,20 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
         fitted_data = model.sales_at_time(model.bass_parameters, train_times)
         projected_data = model.sales_at_time(model.bass_parameters, test_times)
 
-        plt.plot(
-            # Actual values
-            all_times, all_values,
-            # Model projections from data that the model has seen
-            train_times, fitted_data,
-            # Model projections from data that the model has not seen
-            test_times, projected_data
-        )
-        plt.title(f"Common Crawl {cc_cfg['usage_stat']} per crawl voor {mime_type}")
-        plt.legend([cc_cfg['usage_stat'].capitalize(), "Bass model", "Bass test"])
-        plt.savefig(f'images/{urllib.parse.quote_plus(mime_type)}.png')
-        plt.show()
+        if mime_type in cc_cfg['mime_plots']:
+            plt.plot(
+                # Actual values
+                all_times, usage_per_crawl,
+                # Model projections from data that the model has seen
+                train_times, fitted_data,
+                # Model projections from data that the model has not seen
+                test_times, projected_data
+            )
+            plt.xticks(all_times, year_labels)
+            plt.title(f"Common Crawl {cc_cfg['usage_stat']} per crawl voor {mime_type}")
+            plt.legend([cc_cfg['usage_stat'].capitalize(), "Bass model", "Bass test"])
+            plt.savefig(f'images/{urllib.parse.quote_plus(mime_type)}.png')
+            plt.show()
 
 
 if __name__ == '__main__':
