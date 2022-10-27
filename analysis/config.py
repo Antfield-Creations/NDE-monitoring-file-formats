@@ -38,31 +38,6 @@ def load_config(
     if config['run_id'] is None:
         config['run_id'] = time.strftime('%Y-%m-%d_%Hh%Mm%Ss')
 
-    for model in config['models']:
-        model_cfg = config['models'][model]
-
-        if artifact_folder is not None:
-            model_cfg['artifacts']['folder'] = artifact_folder
-
-        assert config['run_id'] is not None
-
-        # Replace run id template with actual run id value
-        # You can use common home-folder tildes '~' in folder specs
-        model_cfg['artifacts']['folder'] = \
-            model_cfg['artifacts']['folder'].replace('{run_id}', config['run_id'])
-
-        model_cfg['artifacts']['folder'] = \
-            os.path.expanduser(model_cfg['artifacts']['folder'])
-
-        model_cfg['artifacts']['logs']['folder'] = \
-            model_cfg['artifacts']['logs']['folder'].replace('{run_id}', config['run_id'])
-        model_cfg['artifacts']['logs']['folder'] = \
-            os.path.expanduser(model_cfg['artifacts']['logs']['folder'])
-
-        if not model_cfg['artifacts']['folder'].startswith('gs://') \
-                and not model_cfg['artifacts']['folder'].startswith('gcs://'):
-            os.makedirs(model_cfg['artifacts']['folder'], exist_ok=True)
-
     # Configure logging
     logger = logging.getLogger()
 
