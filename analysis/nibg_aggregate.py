@@ -3,8 +3,12 @@ Module to create aggregated statistics - per file format, per period - for raw r
 Nederlands Instituut voor Beeld en Geluid, courtesy of Mari Wigham.
 """
 import datetime
+import json
 import logging
 from argparse import ArgumentParser
+from typing import List
+
+from tqdm import tqdm
 
 from analysis.config import load_config, Config
 
@@ -12,14 +16,43 @@ from analysis.config import load_config, Config
 def main(config: Config) -> int:
     start = datetime.datetime.now()
 
-    line_counter = 0
-    with open(config['data']['nibg']['raw_csv_path'], 'rt') as f:
-        for record in f:
-            line_counter += 1
-            record = f.readline()
+    nibg_cfg = config['data']['nibg']
+    file_temp_stats = {}
+    skipped_records = 0
 
-            if line_counter % 1000000 == 0:
-                logging.info(f'Line {line_counter}')
+    with open(nibg_cfg['raw_csv_path'], 'rt') as f:
+        for line_no, record in enumerate(tqdm(f, total=nibg_cfg['raw_csv_line_count'])):
+            # Skip header with column names
+            if line_no == 0:
+                header = record.split(',')
+                continue
+
+            parts = record.split(',')
+
+            format = parts[3]
+            file_temp_stats.setdefault(format, {})
+
+            create_date = parts[5]
+            if create_date == '' or create_date == 'true':
+                skipped_records += 1
+                continue
+
+            year_month = '-'.join(create_date.split('-')[0:2])
+            file_temp_stats[format].setdefault(year_month, 0)
+            file_temp_stats[format][year_month] += 1
+
+    # Prune stats for formats that have at least 10 entries
+    formats = list(file_temp_stats.keys())
+    dropped_formats: List[str] = []
+
+    for format in formats:
+        if len(file_temp_stats[format].keys()) < nibg_cfg['minimum_time_periods']:
+            del file_temp_stats[format]
+            dropped_formats.append(format)
+
+    logging.info(json.dumps(file_temp_stats, indent=2))
+    logging.info(f'Skipped {skipped_records} records')
+    logging.info(f'{dropped_formats=}')
 
     end = datetime.datetime.now()
     logging.info(f'Script took {end - start}')
