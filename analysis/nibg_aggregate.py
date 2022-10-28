@@ -5,6 +5,7 @@ Nederlands Instituut voor Beeld en Geluid, courtesy of Mari Wigham.
 import datetime
 import json
 import logging
+import os.path
 from argparse import ArgumentParser
 from typing import List
 
@@ -50,7 +51,10 @@ def main(config: Config) -> int:
             del file_temp_stats[format]
             dropped_formats.append(format)
 
-    logging.info(json.dumps(file_temp_stats, indent=2))
+    output_path = os.path.join(nibg_cfg['json_output_dir'], 'aggregate_stats.json')
+    with open(output_path, 'wt') as f:
+        f.write(json.dumps(file_temp_stats, indent=2))
+    logging.info(f'Wrote stats to {output_path}')
     logging.info(f'Skipped {skipped_records} records')
     logging.info(f'{dropped_formats=}')
 
