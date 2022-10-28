@@ -203,9 +203,10 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
                         in zip(actual_test_values, linear_projected_values)]
 
         error_stats.append({
-            'mime_type': mime_type,
-            'bass_avg_test_error': mean(bass_error),
-            'linear_avg_test_error': mean(linear_error)
+            'Mime type': mime_type,
+            'Bass gemiddelde fout': int(mean(bass_error)),
+            'Linear gemiddelde fout': int(mean(linear_error)),
+            'Ratio Bass over lineair': f'{int(mean(bass_error)) / int(mean(linear_error)):.2g}'
         })
 
         # Plot if marked so in configuration
