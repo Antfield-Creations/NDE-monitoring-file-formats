@@ -3,6 +3,9 @@ spec:
   run_id:
 
   data:
+    nibg:
+      raw_csv_path: ~/data/NDE/digital_files.csv
+
     common_crawl:
       # Metadata url
       collection_url: https://index.commoncrawl.org/collinfo.json
@@ -18,5 +21,6 @@ spec:
         - image/gif
         - application/x-mobipocket-ebook
       csv_output_dir: 'data/'
+
 
   models: []
