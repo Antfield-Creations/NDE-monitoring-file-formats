@@ -2,6 +2,7 @@ import csv
 import datetime
 import json
 import logging
+import os.path
 import urllib.parse
 from argparse import ArgumentParser
 from statistics import mean
@@ -46,6 +47,13 @@ def main(config: Config) -> int:
     typed_stats = parse_csv(stats)
     declining = filter_declining(typed_stats)
     model_stats = analyse(declining, coll_info, config)
+    model_stats = sorted(model_stats, key=lambda row: float(row['Ratio Bass over lineair']))
+
+    with open(os.path.join(crawl_cfg['csv_output_dir'], 'bass_vs_linear_avg_errors.csv'), 'wt') as f:
+        writer = csv.DictWriter(f, fieldnames=model_stats[0].keys())
+        writer.writeheader()
+        writer.writerows(model_stats)
+
     logging.info(json.dumps(model_stats, indent=2))
 
     logging.info(f'Script took {datetime.datetime.now() - start}')
