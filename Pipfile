@@ -14,6 +14,7 @@ sklearn = "*"
 scipy = "*"
 # For plotting model graphs
 matplotlib = "*"
+tqdm = "*"
 
 [dev-packages]
 flake8 = "*"
