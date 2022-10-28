@@ -16,5 +16,7 @@ spec:
       mime_plots:
         - application/xhtml+xml
         - image/gif
+        - application/x-mobipocket-ebook
+      csv_output_dir: 'data/'
 
   models: []
