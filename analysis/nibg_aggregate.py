@@ -51,7 +51,7 @@ def main(config: Config) -> int:
             del file_temp_stats[format]
             dropped_formats.append(format)
 
-    output_path = os.path.join(nibg_cfg['json_output_dir'], 'aggregate_stats.json')
+    output_path = os.path.join(nibg_cfg['json_output_dir'], 'nibg_aggregate_stats.json')
     with open(output_path, 'wt') as f:
         f.write(json.dumps(file_temp_stats, indent=2))
     logging.info(f'Wrote stats to {output_path}')
