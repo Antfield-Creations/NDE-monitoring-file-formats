@@ -2,6 +2,7 @@ import logging
 import os
 import time
 from io import StringIO
+from os.path import expanduser
 from typing import Optional
 
 from ruamel.yaml import YAML
@@ -33,9 +34,7 @@ def load_config(
 
     if run_id is not None:
         config['run_id'] = run_id
-
-    # run_id can be passed either from the function arguments or from config.yaml
-    if config['run_id'] is None:
+    else:
         config['run_id'] = time.strftime('%Y-%m-%d_%Hh%Mm%Ss')
 
     # Configure logging
@@ -45,6 +44,7 @@ def load_config(
     if artifact_folder is None:
         os.makedirs('logs', exist_ok=True)
         log_path = os.path.join('logs', 'logfile.txt')
+
     # Write to local folder if artifact path is in a bucket: FileHandler can't write directly to bucket
     elif artifact_folder.startswith('gs://') or artifact_folder.startswith('gcs://'):
         os.makedirs('logs', exist_ok=True)
@@ -58,6 +58,9 @@ def load_config(
     )
     logger.addHandler(file_handler)
     logging.info(f"Session has run id {config['run_id']}")
+
+    # Expand user directories
+    config['data']['nibg']['raw_csv_path'] = expanduser(config['data']['nibg']['raw_csv_path'])
 
     # Validate the config: convert to text and check for template markers "~" and "{"
     string_stream = StringIO()
