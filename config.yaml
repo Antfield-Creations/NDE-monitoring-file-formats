@@ -7,6 +7,7 @@ spec:
       raw_csv_path: ~/data/NDE/digital_files.csv
       raw_csv_line_count: 4741017
       minimum_time_periods: 10
+      json_output_dir: data/
 
     common_crawl:
       # Metadata url
@@ -22,7 +23,7 @@ spec:
         - application/xhtml+xml
         - image/gif
         - application/x-mobipocket-ebook
-      csv_output_dir: 'data/'
+      csv_output_dir: data/
 
 
   models: []
