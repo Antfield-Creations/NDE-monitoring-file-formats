@@ -1,9 +1,18 @@
+import urllib.request
 from argparse import ArgumentParser
 
 from analysis.config import Config, load_config
 
 
 def main(config: Config) -> int:
+    dans_cfg = config['data']['dans']
+
+    with urllib.request.urlopen(dans_cfg['start_index']) as f:
+        if f.status != 200:
+            raise RuntimeError(f'Invalid response {f.status}')
+
+        res_text = f.read().decode('utf-8')
+
     return 0
 
 
