@@ -15,6 +15,7 @@ scipy = "*"
 # For plotting model graphs
 matplotlib = "*"
 tqdm = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 flake8 = "*"
