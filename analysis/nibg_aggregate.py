@@ -84,7 +84,7 @@ def main(config: Config) -> int:
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser('Performs the Common Crawl MIME type usage-over-time analysis')
+    parser = ArgumentParser('Performs the Nederlands Instituut voor Beeld en Geluid raw file archive metadata analysis')
     parser.add_argument('-c', '--config', default='config.yaml')
 
     args = parser.parse_args()
