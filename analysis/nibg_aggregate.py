@@ -69,6 +69,11 @@ def main(config: Config) -> int:
         f.write(json.dumps(file_temp_stats, indent=2))
 
     logging.info(f'Wrote stats to {output_path}')
+    logging.info('Counts:')
+    for format in file_temp_stats.keys():
+        total = sum([count for count in file_temp_stats[format].values()])
+        logging.info(f'{format=} {total=}')
+
     logging.info(f'Skipped {skipped_records} records')
     logging.info(f'{dropped_formats=}')
 
