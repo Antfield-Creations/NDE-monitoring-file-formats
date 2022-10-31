@@ -30,8 +30,19 @@ def main(config: Config) -> int:
 
             parts = record.split(',')
 
-            format = parts[3]
-            file_temp_stats.setdefault(format, {})
+            filename = str(parts[2])
+            filetype = str(parts[3])
+            # Skip if there is no dot in the filename to separate the file name extension
+            if '.' not in filename:
+                if filetype == '':
+                    skipped_records += 1
+                    continue
+                else:
+                    filename = filetype
+
+            extension = filename.split('.')[-1].lower()
+
+            file_temp_stats.setdefault(extension, {})
 
             create_date = parts[5]
             if create_date == '' or create_date == 'true':
@@ -39,17 +50,17 @@ def main(config: Config) -> int:
                 continue
 
             year_month = '-'.join(create_date.split('-')[0:2])
-            file_temp_stats[format].setdefault(year_month, 0)
-            file_temp_stats[format][year_month] += 1
+            file_temp_stats[extension].setdefault(year_month, 0)
+            file_temp_stats[extension][year_month] += 1
 
     # Prune stats for formats that have at least 10 entries
     formats = list(file_temp_stats.keys())
     dropped_formats: List[str] = []
 
-    for format in formats:
-        if len(file_temp_stats[format].keys()) < nibg_cfg['minimum_time_periods']:
-            del file_temp_stats[format]
-            dropped_formats.append(format)
+    for extension in formats:
+        if len(file_temp_stats[extension].keys()) < nibg_cfg['minimum_time_periods']:
+            del file_temp_stats[extension]
+            dropped_formats.append(extension)
 
     output_path = os.path.join(nibg_cfg['json_output_dir'], 'nibg_aggregate_stats.json')
     with open(output_path, 'wt') as f:
