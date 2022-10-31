@@ -40,14 +40,13 @@ def main(config: Config) -> int:
                 else:
                     filename = filetype
 
-            extension = filename.split('.')[-1].lower()
-
-            file_temp_stats.setdefault(extension, {})
-
             create_date = parts[5]
             if create_date == '' or create_date == 'true':
                 skipped_records += 1
                 continue
+
+            extension = filename.split('.')[-1].lower()
+            file_temp_stats.setdefault(extension, {})
 
             year_month = '-'.join(create_date.split('-')[0:2])
             file_temp_stats[extension].setdefault(year_month, 0)
@@ -56,15 +55,19 @@ def main(config: Config) -> int:
     # Prune stats for formats that have at least 10 entries
     formats = list(file_temp_stats.keys())
     dropped_formats: List[str] = []
+    min_measurements = nibg_cfg['minimum_time_periods']
 
     for extension in formats:
-        if len(file_temp_stats[extension].keys()) < nibg_cfg['minimum_time_periods']:
+        num_measurements = len(file_temp_stats[extension].keys())
+        if num_measurements < min_measurements:
+            logging.warning(f"Excluded {extension}: only {num_measurements} available, minimum is {min_measurements}")
             del file_temp_stats[extension]
             dropped_formats.append(extension)
 
     output_path = os.path.join(nibg_cfg['json_output_dir'], 'nibg_aggregate_stats.json')
     with open(output_path, 'wt') as f:
         f.write(json.dumps(file_temp_stats, indent=2))
+
     logging.info(f'Wrote stats to {output_path}')
     logging.info(f'Skipped {skipped_records} records')
     logging.info(f'{dropped_formats=}')
