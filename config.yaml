@@ -5,6 +5,7 @@ spec:
   data:
     dans:
       start_index: https://archaeology.datastations.nl/
+      page_subpath: dataverse/root?q=&types=dataverses%3Adatasets&sort=dateSort&order=desc&page={page}
 
     nibg:
       raw_csv_path: ~/data/NDE/digital_files.csv
