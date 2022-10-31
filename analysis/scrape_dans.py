@@ -1,6 +1,8 @@
 import urllib.request
 from argparse import ArgumentParser
 
+from bs4 import BeautifulSoup
+
 from analysis.config import Config, load_config
 
 
@@ -12,6 +14,7 @@ def main(config: Config) -> int:
             raise RuntimeError(f'Invalid response {f.status}')
 
         res_text = f.read().decode('utf-8')
+        soup = BeautifulSoup(res_text)
 
     return 0
 
