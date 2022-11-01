@@ -32,6 +32,27 @@ def main(config: Config) -> int:
     return 0
 
 
+def process_datasets_page(page_num: int, dans_cfg: dict) -> None:
+    root_url = dans_cfg['root_url']
+    subpath = dans_cfg['page_subpath'].format(page=page_num)
+
+    with urllib.request.urlopen(root_url + subpath) as f:
+        if f.status != 200:
+            raise RuntimeError(f'Invalid response {f.status}')
+
+        res_text = f.read().decode('utf-8')
+    soup = BeautifulSoup(res_text)
+
+    for dataset in soup.find_all(class_='card-title-icon-block'):
+        hyperlink = dataset.a['href']
+        full_dataset_url = root_url + hyperlink
+
+        with urllib.request.urlopen(full_dataset_url) as f:
+            res_text = f.read().decode('utf-8')
+
+        pass
+
+
 if __name__ == '__main__':
     parser = ArgumentParser('Performs the Nederlands Instituut voor Beeld en Geluid metadata analysis')
     parser.add_argument('-c', '--config', default='config.yaml')
