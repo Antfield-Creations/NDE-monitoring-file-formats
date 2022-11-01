@@ -10,8 +10,9 @@ from analysis.config import Config, load_config
 
 def main(config: Config) -> int:
     dans_cfg = config['data']['dans']
+    root_url = dans_cfg['root_url']
 
-    with urllib.request.urlopen(dans_cfg['start_index']) as f:
+    with urllib.request.urlopen(root_url) as f:
         if f.status != 200:
             raise RuntimeError(f'Invalid response {f.status}')
 
