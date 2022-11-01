@@ -16,6 +16,7 @@ scipy = "*"
 matplotlib = "*"
 tqdm = "*"
 beautifulsoup4 = "*"
+selenium = "*"
 
 [dev-packages]
 flake8 = "*"
