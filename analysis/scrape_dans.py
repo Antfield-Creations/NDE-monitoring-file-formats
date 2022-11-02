@@ -1,6 +1,7 @@
 import urllib.request
 from argparse import ArgumentParser
 from math import ceil
+from typing import List
 
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -41,7 +42,17 @@ def process_datasets_page(page_num: int, dans_cfg: dict) -> None:
             raise RuntimeError(f'Invalid response {f.status}')
 
         res_text = f.read().decode('utf-8')
+
+    dois = parse_page(res_text, dans_cfg)
+    for doi in dois:
+        pass
+
+
+def parse_page(res_text: str, dans_cfg: dict) -> List[str]:
     soup = BeautifulSoup(res_text)
+    root_url = dans_cfg['root_url']
+
+    dois: List[str] = []
 
     for dataset in soup.find_all(class_='card-title-icon-block'):
         hyperlink = dataset.a['href']
@@ -51,6 +62,8 @@ def process_datasets_page(page_num: int, dans_cfg: dict) -> None:
             res_text = f.read().decode('utf-8')
 
         pass
+
+    return dois
 
 
 if __name__ == '__main__':
