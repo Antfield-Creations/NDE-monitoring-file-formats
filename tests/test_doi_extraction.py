@@ -1,4 +1,3 @@
-from analysis.config import load_config
 from analysis.scrape_dans import parse_page
 
 
