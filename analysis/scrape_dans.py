@@ -43,25 +43,20 @@ def process_datasets_page(page_num: int, dans_cfg: dict) -> None:
 
         res_text = f.read().decode('utf-8')
 
-    dois = parse_page(res_text, dans_cfg)
-    for doi in dois:
+    dois = parse_page(res_text)
+    for _ in dois:
         pass
 
 
-def parse_page(res_text: str, dans_cfg: dict) -> List[str]:
+def parse_page(res_text: str) -> List[str]:
     soup = BeautifulSoup(res_text)
-    root_url = dans_cfg['root_url']
 
     dois: List[str] = []
 
     for dataset in soup.find_all(class_='card-title-icon-block'):
         hyperlink = dataset.a['href']
-        full_dataset_url = root_url + hyperlink
-
-        with urllib.request.urlopen(full_dataset_url) as f:
-            res_text = f.read().decode('utf-8')
-
-        pass
+        doi = hyperlink.split('=')[1]
+        dois.append(doi)
 
     return dois
 
