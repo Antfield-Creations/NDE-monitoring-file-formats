@@ -1,26 +1,12 @@
 import datetime
 import json
 import logging
+import math
 import os
 from argparse import ArgumentParser
+from typing import Dict
 
 from analysis.config import load_config, Config
-
-
-quarter_mapping = {
-    '-01': "Q1",
-    '-02': "Q1",
-    '-03': "Q1",
-    '-04': "Q2",
-    '-05': "Q2",
-    '-06': "Q2",
-    '-07': "Q3",
-    '-08': "Q3",
-    '-09': "Q3",
-    '-10': "Q4",
-    '-11': "Q4",
-    '-12': "Q4",
-}
 
 
 def main(config: Config) -> int:
@@ -31,16 +17,28 @@ def main(config: Config) -> int:
     with open(aggregate_stats_path, 'rt') as f:
         aggregate_stats = json.loads(f.read())
 
-        for format_name, stats in aggregate_stats.items():
-            periods = list(stats.keys())
-            counts = list(stats.items())
-
-            pass
+    to_sorted_quarterly(aggregate_stats)
 
     end = datetime.datetime.now()
     logging.info(f'Script took {end - start}')
 
     return 0
+
+
+def to_sorted_quarterly(file_type_montly_counts: Dict[str, int]) -> Dict[str, int]:
+    monthly_counts = list(file_type_montly_counts.items())
+    monthly_counts = sorted(monthly_counts, key=lambda stats: stats[0])
+    quarterly_counts: Dict[str, int] = {}
+
+    for year_month, count in monthly_counts:
+        year = year_month.split('-')[0]
+        month = int(year_month.split('-')[1])
+        quarter = math.ceil(month / 4)
+
+        quarterly_counts.setdefault(f'{year}Q{quarter}', 0)
+        quarterly_counts[f'{year}Q{quarter}'] += count
+
+    return quarterly_counts
 
 
 if __name__ == '__main__':
