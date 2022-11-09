@@ -80,9 +80,6 @@ def process_datasets_page(page_num: int, dans_cfg: dict) -> List[str]:
 
     return dois
 
-    dois = parse_page(res_text)
-    for _ in dois:
-        pass
 
 
 def parse_page(res_text: str) -> List[str]:
