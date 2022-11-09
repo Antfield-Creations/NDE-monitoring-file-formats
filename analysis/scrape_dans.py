@@ -54,7 +54,7 @@ def main(config: Config) -> int:
         dois = process_datasets_page(page_num, dans_cfg)
 
         for doi in dois:
-            extract_file_metadata(doi, dans_cfg)
+            _ = extract_file_metadata(doi, dans_cfg)
             continue
 
         break
@@ -129,10 +129,10 @@ def extract_file_metadata(doi: str, dans_cfg: dict) -> List[Tuple[str, str]]:
                 if 'Dataset not yet migrated' in value['dsDescriptionValue']['value']:
                     return []
 
+    # Inspect the available dataset versions
     versions_subpath = dans_cfg['dataset_versions_api_subpath']
-
     url = root_url + versions_subpath.format(doi=doi)
-    res = json.loads(get(url))
+    _ = json.loads(get(url))
 
     return []
 
