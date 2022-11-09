@@ -2,6 +2,7 @@
 Module for scraping file metadata from the DANS Archaeology Datastation.
 The scrape harvests only metadata from the files as originally deposited, not the files being offered as converted to
 preferred formats. This way, we can analyze the original file formats in use at the time of deposition.
+Good example: https://archaeology.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/dans-zbe-b8h5
 
 In order to extract this specific metadata, the `main` script filters data on the following:
 1. It iterates over all pages in the datasets index of the Archaeology Datastation (~120k results in ~12k pages)
