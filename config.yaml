@@ -32,5 +32,4 @@ spec:
         - application/x-mobipocket-ebook
       csv_output_dir: data/
 
-
   models: []
