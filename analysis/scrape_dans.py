@@ -30,6 +30,13 @@ from analysis.config import Config, load_config
 
 
 def main(config: Config) -> int:
+    """
+    Iterates over all pages in the datasets index of the Archaeology Datastation (~120k results in ~12k pages)
+
+    :param config: a analysis.config.Config instance
+
+    :return: 0
+    """
     dans_cfg = config['data']['dans']
     root_url = dans_cfg['root_url']
 
