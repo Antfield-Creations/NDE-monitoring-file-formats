@@ -18,7 +18,7 @@ def main(config: Config) -> int:
     start = datetime.datetime.now()
 
     nibg_cfg = config['data']['nibg']
-    file_temp_stats = {}
+    file_temp_stats: dict = {}
     skipped_records = 0
 
     with open(nibg_cfg['raw_csv_path'], 'rt') as f:
