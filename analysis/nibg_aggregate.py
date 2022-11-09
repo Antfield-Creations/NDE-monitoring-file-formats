@@ -25,7 +25,7 @@ def main(config: Config) -> int:
         for line_no, record in enumerate(tqdm(f, total=nibg_cfg['raw_csv_line_count'])):
             # Skip header with column names
             if line_no == 0:
-                header = record.split(',')
+                # header = record.split(',')
                 continue
 
             parts = record.split(',')
