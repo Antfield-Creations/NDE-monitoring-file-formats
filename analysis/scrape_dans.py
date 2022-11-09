@@ -81,8 +81,14 @@ def process_datasets_page(page_num: int, dans_cfg: dict) -> List[str]:
     return dois
 
 
+def extract_dois(res_text: str) -> List[str]:
+    """
+    Extracts the digital object identifier (DOI) from the links to the datasets on a datasets results page.
 
-def parse_page(res_text: str) -> List[str]:
+    :param res_text: The HTML text of a Archaeology Datastation datasets results page
+
+    :return: A list of extracted DOIs as strings
+    """
     soup = BeautifulSoup(res_text)
 
     dois: List[str] = []
