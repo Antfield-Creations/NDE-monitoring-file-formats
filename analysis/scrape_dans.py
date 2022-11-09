@@ -22,7 +22,7 @@ In order to extract this specific metadata, the `main` script filters data on th
 import json
 from argparse import ArgumentParser
 from math import ceil
-from typing import List
+from typing import List, Tuple
 
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -84,6 +84,42 @@ def parse_page(res_text: str) -> List[str]:
         dois.append(doi)
 
     return dois
+
+
+def extract_file_metadata(doi: str, dans_cfg: dict) -> List[Tuple[str, str]]:
+    """
+    Extracts original file names and deposit dates for a dataset designated by `doi`
+
+    It returns an empty list for a dataset having a description "Files not yet migrated to Data Station"
+    It accepts a dataset with a valid version: either
+      - One version labeled "EASY Migration" and summary "This is the first published version."
+      - Two or more versions, only the version with summary "This is the first published version.":
+        see: https://archaeology.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/dans-zbe-b8h5
+      - Two or more versions labeled "EASY Migration": TODO
+
+    :param doi:         Digital object identifier for the dataset
+    :param dans_cfg:    DANS Archaeology datastation extracted from a Config instance
+
+    :return:            A list of tuples, each containing a filename and a deposit date. May return an empty list.
+    """
+    root_url = dans_cfg['root_url']
+    overview_subpath = dans_cfg['dataset_overview_api_subpath']
+    url = root_url + overview_subpath.format(doi=doi)
+    res = json.loads(get(url))
+
+    # Return empty list for datasets not yet migrated
+    for citation_field in res['data']['latestVersion']['metadataBlocks']['citation']['fields']:
+        if citation_field['typeName'] == 'dsDescription':
+            for value in citation_field['value']:
+                if 'Dataset not yet migrated' in value['dsDescriptionValue']['value']:
+                    return []
+
+    versions_subpath = dans_cfg['dataset_versions_api_subpath']
+
+    url = root_url + versions_subpath.format(doi=doi)
+    res = json.loads(get(url))
+
+    return []
 
 
 if __name__ == '__main__':
