@@ -40,7 +40,7 @@ def main(config: Config) -> int:
     :return: 0
     """
     dans_cfg = config['data']['dans']
-    root_url = dans_cfg['root_url']
+    url = dans_cfg['root_url']
 
     res_text = get(url)
     soup = BeautifulSoup(res_text)
