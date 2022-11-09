@@ -51,7 +51,11 @@ def main(config: Config) -> int:
     num_pages = ceil(total / page_size)
 
     for page_num in tqdm(range(dans_cfg['start_page'], num_pages)):
-        process_datasets_page(page_num, dans_cfg)
+        dois = process_datasets_page(page_num, dans_cfg)
+
+        for doi in dois:
+            extract_file_metadata(doi, dans_cfg)
+            continue
 
         break
 
