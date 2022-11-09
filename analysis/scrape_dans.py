@@ -62,15 +62,23 @@ def main(config: Config) -> int:
     return 0
 
 
-def process_datasets_page(page_num: int, dans_cfg: dict) -> None:
+def process_datasets_page(page_num: int, dans_cfg: dict) -> List[str]:
+    """
+    Processes a specific results page indicated by `page_num` from the main Archaeology Datastation datasets index
+
+    :param page_num:    The page number of the complete result set, as a whole positive number
+    :param dans_cfg:    The DANS configuration parsed extracted from a Config instance
+
+    :return: A list of DOIs as strings
+    """
     root_url = dans_cfg['root_url']
-    subpath = dans_cfg['page_subpath'].format(page=page_num)
+    page_subpath = dans_cfg['page_subpath'].format(page=page_num)
 
     url = root_url + page_subpath
     res_text = get(url)
     dois = extract_dois(res_text)
 
-        res_text = f.read().decode('utf-8')
+    return dois
 
     dois = parse_page(res_text)
     for _ in dois:
