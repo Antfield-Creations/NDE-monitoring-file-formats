@@ -14,4 +14,3 @@ def extract_year_ticks(time_labels: List[str], separator: str = '-', index: int 
     year_labels[0] = ''
 
     return year_labels
-

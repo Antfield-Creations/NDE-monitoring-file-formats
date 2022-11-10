@@ -1,4 +1,4 @@
-from analysis.common_crawl import extract_years
+from analysis.common_crawl import extract_year_ticks
 
 
 def test_something() -> None:
@@ -23,6 +23,6 @@ def test_something() -> None:
          "cdx-api": "https://index.commoncrawl.org/CC-MAIN-2014-42-index"}
     ]
 
-    year_labels = extract_years(test_data)
+    year_labels = extract_year_ticks([entry['id'] for entry in test_data])
     assert len(year_labels) == len(test_data)
     assert year_labels == ['', '', '', '2015', '', '2016']
