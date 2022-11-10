@@ -55,7 +55,7 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
             else:
                 type_counts.append({this_quarter: count})
 
-        return quarterly_counts
+    return quarterly_counts
 
 
 if __name__ == '__main__':
