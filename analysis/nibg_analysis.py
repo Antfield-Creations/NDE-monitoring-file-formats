@@ -30,15 +30,16 @@ def to_sorted_quarterly(file_type_montly_counts: Dict[str, int]) -> Dict[str, in
     monthly_counts = sorted(monthly_counts, key=lambda stats: stats[0])
     quarterly_counts: Dict[str, int] = {}
 
-    for year_month, count in monthly_counts:
-        year = year_month.split('-')[0]
-        month = int(year_month.split('-')[1])
-        quarter = math.ceil(month / 4)
+    for file_type, counts in monthly_counts:
+        for year_month, count in counts.items():
+            year = year_month.split('-')[0]
+            month = int(year_month.split('-')[1])
+            quarter = math.ceil(month / 4)
 
-        quarterly_counts.setdefault(f'{year}Q{quarter}', 0)
-        quarterly_counts[f'{year}Q{quarter}'] += count
+            quarterly_counts.setdefault(f'{year}Q{quarter}', 0)
+            quarterly_counts[f'{year}Q{quarter}'] += count
 
-    return quarterly_counts
+        return quarterly_counts
 
 
 if __name__ == '__main__':
