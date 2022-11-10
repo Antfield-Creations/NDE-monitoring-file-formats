@@ -34,6 +34,8 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
     quarterly_counts: SortedFileCount = {}
 
     for file_type, monthly_counts in file_type_montly_counts.items():
+        quarterly_counts.setdefault(file_type, [])
+
         time_sorted = list(monthly_counts.items())
         time_sorted = sorted(time_sorted, key=lambda stats: stats[0])
 
