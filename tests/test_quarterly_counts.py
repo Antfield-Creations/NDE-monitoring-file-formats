@@ -15,6 +15,9 @@ def test_quarterly_counts() -> None:
 
     mxf_stats = aggregate_stats['mxf']
     monthly_summed = sum(mxf_stats.values())
-    quarterly_stats = to_sorted_quarterly(mxf_stats)
-    quarterly_summed = sum(quarterly_stats.values())
-    assert monthly_summed == quarterly_summed
+    quarterly_stats = to_sorted_quarterly(aggregate_stats)
+    mxf_stats = quarterly_stats['mxf']
+    mxf_counts = [list(entry.values())[0] for entry in mxf_stats]
+    quarterly_summed = sum(mxf_counts)
+
+    assert monthly_summed == quarterly_summed, 'sum of monthly counts should match the sum of quarterly counts'

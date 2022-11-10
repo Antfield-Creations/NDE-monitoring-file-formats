@@ -4,9 +4,13 @@ import logging
 import math
 import os
 from argparse import ArgumentParser
-from typing import Dict
+from typing import Dict, List
 
 from analysis.config import load_config, Config
+
+Filetype = str
+PeriodicFiletypeCount = Dict[Filetype, Dict[str, int]]
+SortedFileCount = Dict[Filetype, List[Dict[str, int]]]
 
 
 def main(config: Config) -> int:
@@ -17,7 +21,8 @@ def main(config: Config) -> int:
     with open(aggregate_stats_path, 'rt') as f:
         aggregate_stats = json.loads(f.read())
 
-    to_sorted_quarterly(aggregate_stats)
+    quarterly_counts = to_sorted_quarterly(aggregate_stats)
+    logging.info(f'{quarterly_counts=}')
 
     end = datetime.datetime.now()
     logging.info(f'Script took {end - start}')
@@ -25,19 +30,27 @@ def main(config: Config) -> int:
     return 0
 
 
-def to_sorted_quarterly(file_type_montly_counts: Dict[str, int]) -> Dict[str, int]:
-    monthly_counts = list(file_type_montly_counts.items())
-    monthly_counts = sorted(monthly_counts, key=lambda stats: stats[0])
-    quarterly_counts: Dict[str, int] = {}
+def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> SortedFileCount:
+    quarterly_counts: SortedFileCount = {}
 
-    for file_type, counts in monthly_counts:
-        for year_month, count in counts.items():
+    for file_type, monthly_counts in file_type_montly_counts.items():
+        time_sorted = list(monthly_counts.items())
+        time_sorted = sorted(time_sorted, key=lambda stats: stats[0])
+
+        for year_month, count in time_sorted:
             year = year_month.split('-')[0]
             month = int(year_month.split('-')[1])
             quarter = math.ceil(month / 4)
+            this_quarter = f'{year}Q{quarter}'
 
-            quarterly_counts.setdefault(f'{year}Q{quarter}', 0)
-            quarterly_counts[f'{year}Q{quarter}'] += count
+            quarterly_counts.setdefault(file_type, [{this_quarter: 0}])
+
+            type_counts = quarterly_counts[file_type]
+            latest_quarter, latest_count = list(type_counts[-1].items())[-1]
+            if latest_quarter == this_quarter:
+                type_counts[-1][this_quarter] += count
+            else:
+                type_counts.append({this_quarter: count})
 
         return quarterly_counts
 
