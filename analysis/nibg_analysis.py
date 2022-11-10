@@ -46,6 +46,9 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
             this_quarter = f'{year}Q{quarter}'
 
             type_counts = quarterly_counts[file_type]
+            if len(type_counts) == 0:
+                type_counts.append({this_quarter: 0})
+
             latest_quarter, latest_count = list(type_counts[-1].items())[-1]
             if latest_quarter == this_quarter:
                 type_counts[-1][this_quarter] += count
