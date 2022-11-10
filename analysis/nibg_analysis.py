@@ -6,7 +6,12 @@ import os
 from argparse import ArgumentParser
 from typing import Dict, List
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 from analysis.config import load_config, Config
+from analysis.shared_parsers import extract_year_ticks
+from models.bass_diffusion import BassDiffusionModel
 
 Filetype = str
 PeriodicFiletypeCount = Dict[Filetype, Dict[str, int]]
@@ -22,7 +27,7 @@ def main(config: Config) -> int:
         aggregate_stats = json.loads(f.read())
 
     quarterly_counts = to_sorted_quarterly(aggregate_stats)
-    logging.info(json.dumps(quarterly_counts, indent=2))
+    plot_counts(quarterly_counts)
 
     end = datetime.datetime.now()
     logging.info(f'Script took {end - start}')
@@ -56,6 +61,26 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
                 type_counts.append({this_quarter: count})
 
     return quarterly_counts
+
+
+def plot_counts(counts: SortedFileCount) -> None:
+    for file_type, quarter_counts in counts.items():
+        quarters = [list(entry.keys())[0] for entry in quarter_counts]
+        file_counts = [list(entry.values())[0] for entry in quarter_counts]
+
+        # Fit the Bass model
+        times = list(range(len(file_counts)))
+        bass_model = BassDiffusionModel()
+        bass_model.fit(np.array(times), np.array(file_counts))
+
+        plt.plot(
+            times, file_counts
+        )
+        x_axis_labels = extract_year_ticks(quarters, separator='Q', index=0)
+        plt.title(f"NIBG tellingen voor bestandstype {file_type}")
+        plt.xticks(times, x_axis_labels, rotation=45)
+        plt.legend(['Aantal bestanden'])
+        plt.show()
 
 
 if __name__ == '__main__':
