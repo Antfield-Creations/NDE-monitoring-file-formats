@@ -41,7 +41,7 @@ def main(config: Config) -> int:
                     filename = filetype
 
             create_date = parts[5]
-            if create_date == '' or create_date == 'true':
+            if create_date == '' or create_date == 'true' or create_date == 'false':
                 skipped_records += 1
                 continue
 
