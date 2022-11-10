@@ -22,7 +22,7 @@ def main(config: Config) -> int:
         aggregate_stats = json.loads(f.read())
 
     quarterly_counts = to_sorted_quarterly(aggregate_stats)
-    logging.info(f'{quarterly_counts=}')
+    logging.info(json.dumps(quarterly_counts, indent=2))
 
     end = datetime.datetime.now()
     logging.info(f'Script took {end - start}')
