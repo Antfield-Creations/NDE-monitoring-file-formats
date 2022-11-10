@@ -12,7 +12,7 @@ def test_extractor() -> None:
     # TODO: Either mock response or extract data snapshot
     not_migrated_doi = 'doi:10.17026/dans-z7n-aer9'
     file_metadata = extract_file_metadata(not_migrated_doi, dans_cfg)
-    assert file_metadata == [], "It should skip datasets that are not yet migrated"
+    assert file_metadata is None, "It should skip datasets that are not yet migrated"
 
     # "Veldhoven MFA midden Proefsleuvenonderzoek"
     migrated_doi = 'doi:10.17026/dans-zbe-b8h5'
