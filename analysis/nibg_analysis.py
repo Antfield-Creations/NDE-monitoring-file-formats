@@ -47,7 +47,7 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
         for year_month, count in time_sorted:
             year = year_month.split('-')[0]
             month = int(year_month.split('-')[1])
-            quarter = math.ceil(month / 4)
+            quarter = math.ceil(month / 3)
             this_quarter = f'{year}Q{quarter}'
 
             type_counts = quarterly_counts[file_type]
