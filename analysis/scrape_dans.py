@@ -23,6 +23,7 @@ TODO:
     see https://archaeology.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/dans-x8z-d4he,
 """
 import json
+import logging
 from argparse import ArgumentParser
 from math import ceil
 from typing import List, Tuple
@@ -129,8 +130,9 @@ def extract_file_metadata(doi: str, dans_cfg: dict) -> List[Tuple[str, str]]:
     for citation_field in res['data']['latestVersion']['metadataBlocks']['citation']['fields']:
         if citation_field['typeName'] == 'dsDescription':
             for value in citation_field['value']:
-                if 'Dataset not yet migrated' in value['dsDescriptionValue']['value']:
-                    return []
+                if 'not yet migrated' in value['dsDescriptionValue']['value']:
+                    logging.debug(f"Skipping {doi}: not yet migrated")
+                    return None
 
     # Inspect the available dataset versions
     versions_subpath = dans_cfg['dataset_versions_api_subpath']
