@@ -15,6 +15,7 @@ from numpy.lib.stride_tricks import sliding_window_view
 from sklearn.linear_model import LinearRegression
 
 from analysis.config import load_config, Config
+from analysis.shared_parsers import extract_year_ticks
 from models.bass_diffusion import BassDiffusionModel
 
 StatsDict = TypedDict('StatsDict',
@@ -137,27 +138,12 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
     return declining_mime_types
 
 
-def extract_years(collection_metadata: List[Dict[str, str]]) -> List[str]:
-    year_labels = []
-
-    for crawl in reversed(collection_metadata):
-        year = crawl['id'].split('-')[2]
-        if year not in year_labels:
-            year_labels.append(year)
-        else:
-            year_labels.append('')
-
-    year_labels[0] = ''
-
-    return year_labels
-
-
 def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: Config) -> ModelStats:
     error_stats: ModelStats = []
     # Extract out shorthand for long dict value
     cc_cfg = config['data']['common_crawl']
 
-    x_axis_labels = extract_years(collection_metadata)
+    x_axis_labels = extract_year_ticks([entry['id'] for entry in reversed(collection_metadata)])
 
     for mime_type, usage_values in stats.items():
         usage_per_crawl = [list(row.values())[0] for row in usage_values]
