@@ -218,7 +218,7 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
                 'Lineair fit',
                 'Lineair test',
             ])
-            plt.savefig(f'images/{urllib.parse.quote_plus(mime_type)}.png')
+            plt.savefig(f'images/common_crawl/{urllib.parse.quote_plus(mime_type)}.png')
             plt.show()
 
     return error_stats
