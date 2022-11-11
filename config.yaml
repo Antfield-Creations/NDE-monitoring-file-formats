@@ -15,6 +15,7 @@ spec:
       raw_csv_line_count: 4741017
       minimum_time_periods: 10
       json_output_dir: data/
+      img_output_dir: images/nibg/
 
     common_crawl:
       # Metadata url
