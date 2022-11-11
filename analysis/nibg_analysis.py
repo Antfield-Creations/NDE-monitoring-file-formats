@@ -4,7 +4,7 @@ import logging
 import math
 import os
 from argparse import ArgumentParser
-from typing import Dict, List
+from typing import Dict, List, TypedDict
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,7 +15,14 @@ from models.bass_diffusion import BassDiffusionModel
 
 Filetype = str
 PeriodicFiletypeCount = Dict[Filetype, Dict[str, int]]
-SortedFileCount = Dict[Filetype, List[Dict[str, int]]]
+
+
+class PeriodCount(TypedDict):
+    period: str
+    count: int
+
+
+SortedFileCount = Dict[Filetype, List[PeriodCount]]
 
 
 def main(config: Config) -> int:
@@ -52,21 +59,21 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
 
             type_counts = quarterly_counts[file_type]
             if len(type_counts) == 0:
-                type_counts.append({this_quarter: 0})
+                type_counts.append({'period': this_quarter, 'count': 0})
 
-            latest_quarter, latest_count = list(type_counts[-1].items())[-1]
+            latest_quarter = type_counts[-1]['period']
             if latest_quarter == this_quarter:
-                type_counts[-1][this_quarter] += count
+                type_counts[-1]['count'] += count
             else:
-                type_counts.append({this_quarter: count})
+                type_counts.append({'period': this_quarter, 'count': count})
 
     return quarterly_counts
 
 
 def plot_counts(counts: SortedFileCount) -> None:
     for file_type, quarter_counts in counts.items():
-        quarters = [list(entry.keys())[0] for entry in quarter_counts]
-        file_counts = [list(entry.values())[0] for entry in quarter_counts]
+        quarters = [entry['period'] for entry in quarter_counts]
+        file_counts = [entry['count'] for entry in quarter_counts]
 
         # Fit the Bass model
         times = list(range(len(file_counts)))
