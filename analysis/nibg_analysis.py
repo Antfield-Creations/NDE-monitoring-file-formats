@@ -34,7 +34,7 @@ def main(config: Config) -> int:
         aggregate_stats = json.loads(f.read())
 
     quarterly_counts = to_sorted_quarterly(aggregate_stats)
-    plot_counts(quarterly_counts)
+    plot_counts(quarterly_counts, nibg_cfg['img_output_dir'])
 
     end = datetime.datetime.now()
     logging.info(f'Script took {end - start}')
@@ -70,7 +70,7 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
     return quarterly_counts
 
 
-def plot_counts(counts: SortedFileCount) -> None:
+def plot_counts(counts: SortedFileCount, output_dir: str) -> None:
     for file_type, quarter_counts in counts.items():
         quarters = [entry['period'] for entry in quarter_counts]
         file_counts = [entry['count'] for entry in quarter_counts]
@@ -88,6 +88,7 @@ def plot_counts(counts: SortedFileCount) -> None:
         plt.xticks(times, x_axis_labels, rotation=45)
         plt.legend(['Aantal bestanden'])
         plt.show()
+        plt.savefig(os.path.join(output_dir, f'{file_type}.png'))
 
 
 if __name__ == '__main__':
