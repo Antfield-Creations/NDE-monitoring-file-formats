@@ -16,6 +16,7 @@ spec:
       minimum_time_periods: 10
       json_output_dir: data/
       img_output_dir: images/nibg/
+      num_test_measurements: 4
 
     common_crawl:
       # Metadata url
