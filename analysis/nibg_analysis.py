@@ -67,6 +67,12 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
             else:
                 type_counts.append({'period': this_quarter, 'count': count})
 
+        # Chop off the current quarter: counts are still incomplete
+        quarter = math.ceil(datetime.datetime.now().month / 3)
+        current_quarter = f'{datetime.datetime.now().year}Q{quarter}'
+        if quarterly_counts[file_type][-1]['period'] == current_quarter:
+            quarterly_counts[file_type].pop(-1)
+
     return quarterly_counts
 
 
@@ -86,7 +92,7 @@ def plot_counts(counts: SortedFileCount, nibg_cfg: dict) -> None:
         train_counts = all_counts[:-num_tests]
         # test_counts = all_counts[-num_tests:]
 
-        # Fit the Bass model and data
+        # Fit the Bass model and produce data
         bass_model = BassDiffusionModel()
         train_inputs = np.array(train_times)
         test_inputs = np.array(test_times)
