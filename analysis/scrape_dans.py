@@ -55,7 +55,6 @@ def main(config: Config) -> int:
     num_pages = ceil(total / page_size)
 
     num_skipped_datasets = 0
-    filetype_monthly_counts: Dict[str, Dict[str, int]] = {}
 
     for page_num in tqdm(range(dans_cfg['start_page'], num_pages)):
         dois = process_datasets_page(page_num, dans_cfg)
@@ -68,7 +67,7 @@ def main(config: Config) -> int:
                 continue
 
             filenames, deposit_date = file_metadata
-            deposit_month = deposit_date[:6]  # YYYY-mm
+            filetype_counts: Dict[str, int] = {}
 
             # Update the monthly file extension counts by going over all the v1 files in the dataset
             for file in filenames:
@@ -77,9 +76,16 @@ def main(config: Config) -> int:
                     continue
 
                 extension = file.split('.')[-1]
-                filetype_monthly_counts.setdefault(extension, {})
-                filetype_monthly_counts[extension].setdefault(deposit_month, 0)
-                filetype_monthly_counts[extension][deposit_month] += 1
+                filetype_counts.setdefault(extension, 0)
+                filetype_counts[extension] += 1
+
+            with open(dans_cfg['scrape_log_path'], 'at') as f:
+                f.writelines([json.dumps({
+                    'page_num': page_num,
+                    'doi': doi,
+                    'deposit_date': deposit_date,
+                    'filetype_counts': filetype_counts,
+                })])
 
     return 0
 
@@ -178,6 +184,9 @@ def extract_file_metadata(doi: str, dans_cfg: dict) -> Optional[Tuple[List[str],
 
     deposit_date = maybe_date_of_deposit[0]['value']
     filenames = [file['label']for file in first_version['files']]
+
+    # Filter out unwanted files
+    filenames = [file for file in filenames if file not in dans_cfg['file_skip_list']]
 
     return filenames, deposit_date
 

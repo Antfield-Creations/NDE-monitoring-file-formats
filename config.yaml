@@ -9,6 +9,13 @@ spec:
       start_page: 1
       dataset_overview_api_subpath: /api/v1/datasets/:persistentId?persistentId={doi}
       dataset_versions_api_subpath: /api/v1/datasets/:persistentId/versions?persistentId={doi}
+      scrape_log_path: data/dans/scrape_log.ndjson
+      # Skip archaeology datastation ingestion artifacts
+      file_skip_list:
+        - dataset.xml
+        - emd.xml
+        - files.xml
+        - provenance.xml
 
     nibg:
       raw_csv_path: ~/data/NDE/digital_files.csv
