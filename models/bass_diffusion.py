@@ -5,6 +5,7 @@ cumulative function, parameterized by a market potential (m), an innovators fact
 This module was adapted from
 https://github.com/NForouzandehmehr/Bass-Diffusion-model-for-short-life-cycle-products-sales-prediction/blob/master/bass.py
 """
+import functools
 from dataclasses import dataclass
 from typing import Union
 
@@ -32,6 +33,9 @@ class BassDiffusionModel:
             self.bass_parameters = BassParameters(float(m), float(p), float(q))
         else:
             self.bass_parameters = BassParameters()
+
+        # Add a simple "predict" function that binds the model instance's parameters to the sales prediction function
+        self.predict = functools.partial(BassDiffusionModel.sales_at_time, self.bass_parameters)
 
     @staticmethod
     def sales_at_time(
