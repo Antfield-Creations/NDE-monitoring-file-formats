@@ -63,12 +63,16 @@ def main(config: Config) -> int:
 
         # Extract the file metadata for each dataset (by DOI)
         for doi in dois:
-            file_metadata = extract_file_metadata(doi, dans_cfg)
-            if file_metadata is None:
+            version_metadata = scrape_version_metadata(doi, dans_cfg)
+            if version_metadata is None:
                 num_skipped_datasets += 1
                 continue
 
-            filenames, deposit_date = file_metadata
+            # Append the version metadata for the dataset to the newline-delimited json scrape log
+            with open(dans_cfg['scrape_log_path'], 'at') as f:
+                f.write(json.dumps(version_metadata) + '\n')
+
+            filenames, deposit_date = version_metadata
             filetype_counts: Dict[str, int] = {}
 
             # Update the monthly file extension counts by going over all the v1 files in the dataset
