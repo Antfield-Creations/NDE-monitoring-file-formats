@@ -4,7 +4,7 @@ import logging
 import math
 import os
 from argparse import ArgumentParser
-from typing import Dict, List, TypedDict, Tuple
+from typing import Dict, List, TypedDict
 
 import matplotlib.pyplot as plt
 import numpy as np
