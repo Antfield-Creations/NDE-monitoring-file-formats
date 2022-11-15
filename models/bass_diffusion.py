@@ -7,7 +7,7 @@ https://github.com/NForouzandehmehr/Bass-Diffusion-model-for-short-life-cycle-pr
 """
 import functools
 from dataclasses import dataclass
-from typing import Union
+from typing import Union, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +22,7 @@ class BassParameters:
 
 
 class BassDiffusionModel:
-    def __init__(self, m: int = None, p: float = None, q: float = None):
+    def __init__(self, m: Optional[int] = None, p: Optional[float] = None, q: Optional[float] = None):
         """
         Initializes the Bass diffusion model parameters m, p and q with default (overridden if needed) values
         :param m:       Market potential coefficient
