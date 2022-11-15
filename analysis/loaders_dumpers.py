@@ -1,4 +1,4 @@
-from urllib.request import urlopen
+from http.client import HTTPSConnection
 
 from retry import retry
 
