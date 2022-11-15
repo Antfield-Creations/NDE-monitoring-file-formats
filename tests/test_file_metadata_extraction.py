@@ -1,3 +1,5 @@
+from http.client import HTTPSConnection
+
 from analysis.config import load_config
 from analysis.scrape_dans import scrape_version_metadata
 
@@ -11,12 +13,13 @@ def test_extractor() -> None:
     # NOTE this test will fail as soon as this dataset has been migrated.
     # TODO: Either mock response or extract data snapshot
     not_migrated_doi = 'doi:10.17026/dans-z7n-aer9'
-    file_metadata = scrape_version_metadata(not_migrated_doi, dans_cfg)
+    conn = HTTPSConnection(dans_cfg['root_url'].split('/')[-1])
+    file_metadata = scrape_version_metadata(not_migrated_doi, conn, dans_cfg)
     assert file_metadata is None, "It should skip datasets that are not yet migrated"
 
     # "Veldhoven MFA midden Proefsleuvenonderzoek"
     migrated_doi = 'doi:10.17026/dans-zbe-b8h5'
-    file_metadata = scrape_version_metadata(migrated_doi, dans_cfg)
+    file_metadata = scrape_version_metadata(migrated_doi, conn, dans_cfg)
     assert file_metadata is not None
 
     filenames, date = file_metadata  # unpack
