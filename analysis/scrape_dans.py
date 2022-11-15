@@ -85,15 +85,6 @@ def main(config: Config) -> int:
                 filetype_counts.setdefault(extension, 0)
                 filetype_counts[extension] += 1
 
-            # Append the file type counts for the dataset to the newline-delimited json scrape log
-            with open(dans_cfg['scrape_log_path'], 'at') as f:
-                f.write(json.dumps({
-                    'page_num': page_num,
-                    'doi': doi,
-                    'deposit_date': deposit_date,
-                    'filetype_counts': filetype_counts,
-                }) + '\n')
-
     return 0
 
 
