@@ -57,7 +57,7 @@ def main(config: Config) -> int:
     num_skipped_datasets = 0
 
     for page_num in tqdm(range(dans_cfg['start_page'], num_pages)):
-        dois = process_datasets_page(page_num, dans_cfg)
+        dois = dois_from_results(page_num, dans_cfg)
 
         # Extract the file metadata for each dataset (by DOI)
         for doi in dois:
@@ -91,7 +91,7 @@ def main(config: Config) -> int:
     return 0
 
 
-def process_datasets_page(page_num: int, dans_cfg: dict) -> List[str]:
+def dois_from_results(page_num: int, dans_cfg: dict) -> List[str]:
     """
     Processes a specific results page indicated by `page_num` from the main Archaeology Datastation datasets index
 
