@@ -24,6 +24,13 @@ spec:
       json_output_dir: data/
       img_output_dir: images/nibg/
       num_test_measurements: 4
+      linear_plots:
+        - mxf
+        - tif
+        - tar
+        - pdf
+        - mpg
+        - mp3
 
     common_crawl:
       # Metadata url
