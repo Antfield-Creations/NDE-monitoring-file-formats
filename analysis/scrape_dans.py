@@ -130,7 +130,7 @@ def extract_dois(res_text: str) -> List[str]:
     return dois
 
 
-def extract_file_metadata(doi: str, dans_cfg: dict) -> Optional[Tuple[List[str], str]]:
+def scrape_version_metadata(doi: str, dans_cfg: dict) -> Optional[dict]:
     """
     Extracts a list of original filenames and a deposit date for a dataset designated by `doi`
 
