@@ -1,16 +1,20 @@
 from urllib.request import urlopen
 
+from retry import retry
 
-def get(url: str) -> str:
+
+@retry(tries=3, delay=1, backoff=2)
+def get(url: str, conn: HTTPSConnection) -> str:
     """
     Simple helper function to get the text as utf-8 from a url
     :param url: The resource to get the text from
 
     :return: The response text, parsed as UTF-8
     """
-    with urlopen(url) as f:
-        if f.status != 200:
-            raise RuntimeError(f'Invalid response {f.status}')
+    conn.request(method="GET", url=url)
+    response = conn.getresponse()
+    if response.status != 200:
+        raise RuntimeError(f'Invalid response {response.status}')
 
-        res_text = f.read().decode('utf-8')
+    res_text = response.read().decode('utf-8')
     return res_text

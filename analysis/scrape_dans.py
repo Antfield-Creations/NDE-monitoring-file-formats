@@ -25,6 +25,7 @@ TODO:
 import json
 import logging
 from argparse import ArgumentParser
+from http.client import HTTPSConnection
 from math import ceil
 from typing import List, Tuple, Dict, Optional
 
@@ -46,7 +47,8 @@ def main(config: Config) -> int:
     dans_cfg = config['data']['dans']
     url = dans_cfg['root_url']
 
-    res_text = get(url)
+    connection = HTTPSConnection(url.split('/')[-1])
+    res_text = get(url, connection)
     soup = BeautifulSoup(res_text)
     results_count = soup.find(class_='results-count').text.split(' ')
 
