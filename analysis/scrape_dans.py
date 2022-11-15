@@ -59,11 +59,11 @@ def main(config: Config) -> int:
     num_skipped_datasets = 0
 
     for page_num in tqdm(range(dans_cfg['start_page'], num_pages)):
-        dois = dois_from_results(page_num, dans_cfg)
+        dois = dois_from_results(page_num, connection, dans_cfg)
 
         # Extract the file metadata for each dataset (by DOI)
         for doi in dois:
-            version_metadata = scrape_version_metadata(doi, dans_cfg)
+            version_metadata = scrape_version_metadata(doi, connection, dans_cfg)
             if version_metadata is None:
                 num_skipped_datasets += 1
                 continue
@@ -88,7 +88,7 @@ def main(config: Config) -> int:
     return 0
 
 
-def dois_from_results(page_num: int, dans_cfg: dict) -> List[str]:
+def dois_from_results(page_num: int, conn: HTTPSConnection, dans_cfg: dict) -> List[str]:
     """
     Processes a specific results page indicated by `page_num` from the main Archaeology Datastation datasets index
 
@@ -101,7 +101,7 @@ def dois_from_results(page_num: int, dans_cfg: dict) -> List[str]:
     page_subpath = dans_cfg['page_subpath'].format(page=page_num)
 
     url = root_url + page_subpath
-    res_text = get(url)
+    res_text = get(url, conn)
     dois = extract_dois(res_text)
 
     return dois
@@ -127,7 +127,7 @@ def extract_dois(res_text: str) -> List[str]:
     return dois
 
 
-def scrape_version_metadata(doi: str, dans_cfg: dict) -> Optional[dict]:
+def scrape_version_metadata(doi: str, conn: HTTPSConnection, dans_cfg: dict) -> Optional[dict]:
     """
     Extracts a list of original filenames and a deposit date for a dataset designated by `doi`
 
@@ -144,7 +144,7 @@ def scrape_version_metadata(doi: str, dans_cfg: dict) -> Optional[dict]:
     root_url = dans_cfg['root_url']
     overview_subpath = dans_cfg['dataset_overview_api_subpath']
     url = root_url + overview_subpath.format(doi=doi)
-    res = json.loads(get(url))
+    res = json.loads(get(url, conn))
 
     # Return empty list for datasets not yet migrated
     for citation_field in res['data']['latestVersion']['metadataBlocks']['citation']['fields']:
@@ -157,7 +157,7 @@ def scrape_version_metadata(doi: str, dans_cfg: dict) -> Optional[dict]:
     # Inspect the available dataset versions
     versions_subpath = dans_cfg['dataset_versions_api_subpath']
     url = root_url + versions_subpath.format(doi=doi)
-    versions = json.loads(get(url))
+    versions = json.loads(get(url, conn))
 
     return versions
 
