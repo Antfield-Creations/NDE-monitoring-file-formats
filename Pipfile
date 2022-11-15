@@ -17,6 +17,7 @@ matplotlib = "*"
 tqdm = "*"
 beautifulsoup4 = "*"
 selenium = "*"
+retry = "*"
 
 [dev-packages]
 flake8 = "*"
