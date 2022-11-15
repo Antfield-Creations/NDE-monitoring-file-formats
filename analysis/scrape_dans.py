@@ -159,6 +159,10 @@ def scrape_version_metadata(doi: str, dans_cfg: dict) -> Optional[dict]:
     url = root_url + versions_subpath.format(doi=doi)
     versions = json.loads(get(url))
 
+    return versions
+
+
+def analyze(doi: str, versions: dict, dans_cfg: Dict[str, str]) -> Optional[Tuple[List[str], str]]:
     # Return an empty result if there are not two versions of the dataset: one of the original deposited data files,
     # and one offering the data in preferred formats
     if len(versions['data']) != 2:
