@@ -49,7 +49,7 @@ def main(config: Config) -> int:
 
     connection = HTTPSConnection(url.split('/')[-1])
     res_text = get(url, connection)
-    soup = BeautifulSoup(res_text)
+    soup = BeautifulSoup(res_text, features="html.parser")
     results_count = soup.find(class_='results-count').text.split(' ')
 
     total = int(results_count[4].replace(',', ''))
@@ -115,7 +115,7 @@ def extract_dois(res_text: str) -> List[str]:
 
     :return: A list of extracted DOIs as strings
     """
-    soup = BeautifulSoup(res_text)
+    soup = BeautifulSoup(res_text, features="html.parser")
 
     dois: List[str] = []
 
