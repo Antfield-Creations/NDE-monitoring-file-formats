@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 
 from analysis.config import load_config, Config
-from analysis.shared_parsers import extract_year_ticks
+from analysis.shared_parsers import extract_year_ticks, next_year_quarter
 from models.bass_diffusion import BassDiffusionModel
 
 Filetype = str
@@ -91,22 +91,6 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
         quarterly_counts[file_type].pop(-1)
 
     return quarterly_counts
-
-
-def next_year_quarter(last_period: str) -> Tuple[int, int]:
-    """
-    A small helper function to calculate the next quarter
-
-    :param last_period: The quarter to calculate the next one for
-
-    :return: a tuple of the year (perhaps next year) and the next quarter
-    """
-    last_measured_year = int(last_period.split('Q')[0])
-    last_measured_quarter = int(last_period.split('Q')[1])
-    next_quarter = last_measured_quarter + 1 if last_measured_quarter < 4 else 1
-    year = last_measured_year if next_quarter > 1 else last_measured_year + 1
-
-    return year, next_quarter
 
 
 def plot_counts(counts: SortedFileCount, nibg_cfg: dict) -> None:
