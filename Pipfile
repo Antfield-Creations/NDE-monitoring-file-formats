@@ -14,9 +14,11 @@ sklearn = "*"
 scipy = "*"
 # For plotting model graphs
 matplotlib = "*"
+# For showing progress bars
 tqdm = "*"
+# For parsing HTML
 beautifulsoup4 = "*"
-selenium = "*"
+# For re-trying http calls
 retry = "*"
 
 [dev-packages]
