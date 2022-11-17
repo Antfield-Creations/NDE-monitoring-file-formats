@@ -134,8 +134,6 @@ def scrape_version_metadata(doi: str, conn: HTTPSConnection, dans_cfg: dict) -> 
 
     It returns None for a dataset having
         - a description "Files not yet migrated to Data Station"
-        - no two versions
-        - no version 1
 
     :param doi:         Digital object identifier for the dataset
     :param dans_cfg:    DANS Archaeology datastation extracted from a Config instance
