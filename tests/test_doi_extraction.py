@@ -1,4 +1,4 @@
-from analysis.scrape_dans import extract_dois
+from analysis.dans_scrape import extract_dois
 
 
 def test_doi_extraction() -> None:
