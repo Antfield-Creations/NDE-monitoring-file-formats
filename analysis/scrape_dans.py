@@ -25,6 +25,7 @@ TODO:
 import json
 import logging
 from argparse import ArgumentParser
+import datetime
 from http.client import HTTPSConnection
 from math import ceil
 from typing import List, Tuple, Dict, Optional
@@ -44,6 +45,8 @@ def main(config: Config) -> int:
 
     :return: 0
     """
+    start = datetime.datetime.now()
+
     dans_cfg = config['data']['dans']
     url = dans_cfg['root_url']
 
@@ -84,6 +87,9 @@ def main(config: Config) -> int:
                 extension = file.split('.')[-1]
                 filetype_counts.setdefault(extension, 0)
                 filetype_counts[extension] += 1
+
+    end = datetime.datetime.now()
+    logging.info(f'Script took {end - start}')
 
     return 0
 
