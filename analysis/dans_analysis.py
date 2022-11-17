@@ -56,6 +56,9 @@ def main(config: Config) -> int:
                 file_stats[file_type].setdefault(year_month, 0)
                 file_stats[file_type][year_month] += file_type
 
+    with open(dans_cfg['filetype_monthly_aggregate_path'], 'wt') as f:
+        f.write(json.dumps(file_types))
+
     end = datetime.datetime.now()
     logging.info(f'Script took {end - start}')
 
