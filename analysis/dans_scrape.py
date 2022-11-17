@@ -163,37 +163,6 @@ def scrape_version_metadata(doi: str, conn: HTTPSConnection, dans_cfg: dict) -> 
     return versions
 
 
-def analyze(doi: str, versions: dict, dans_cfg: Dict[str, str]) -> Optional[Tuple[List[str], str]]:
-    # Return an empty result if there are not two versions of the dataset: one of the original deposited data files,
-    # and one offering the data in preferred formats
-    if len(versions['data']) != 2:
-        logging.debug(f'Skipping: no two versions for {doi}')
-        return None
-
-    # Return an empty result if there is no single version 1 of the dataset
-    first_version_candidates = [version for version in versions['data'] if version['versionNumber'] == 1]
-    if len(first_version_candidates) != 1:
-        version_numbers = [version['versionNumber'] for version in versions['data']]
-        logging.error(f"Skipping {doi}, no version 1 in {version_numbers}")
-        return None
-
-    first_version = first_version_candidates[0]
-    citation_fields = first_version['metadataBlocks']['citation']['fields']
-    maybe_date_of_deposit = [field for field in citation_fields if field['typeName'] == 'dateOfDeposit']
-    # Return an empty result if there is not a singular deposit date
-    if len(maybe_date_of_deposit) != 1:
-        logging.error(f"Skipping {doi}: no date of deposit found")
-        return None
-
-    deposit_date = maybe_date_of_deposit[0]['value']
-    filenames = [file['label']for file in first_version['files']]
-
-    # Filter out unwanted files
-    filenames = [file for file in filenames if file not in dans_cfg['file_skip_list']]
-
-    return filenames, deposit_date
-
-
 if __name__ == '__main__':
     parser = ArgumentParser('Performs the Nederlands Instituut voor Beeld en Geluid metadata analysis')
     parser.add_argument('-c', '--config', default='config.yaml')
