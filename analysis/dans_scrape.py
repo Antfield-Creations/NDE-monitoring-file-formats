@@ -17,13 +17,13 @@ TODO:
   - Two or more versions labeled "EASY Migration":
     see https://archaeology.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/dans-x8z-d4he,
 """
+import datetime
 import json
 import logging
 from argparse import ArgumentParser
-import datetime
 from http.client import HTTPSConnection
 from math import ceil
-from typing import List, Tuple, Dict, Optional
+from typing import List, Dict, Optional
 
 from bs4 import BeautifulSoup
 from tqdm import tqdm
