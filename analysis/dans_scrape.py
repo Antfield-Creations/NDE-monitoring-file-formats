@@ -162,7 +162,7 @@ def scrape_version_metadata(doi: str, conn: HTTPSConnection, dans_cfg: dict) -> 
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser('Performs the Nederlands Instituut voor Beeld en Geluid metadata analysis')
+    parser = ArgumentParser('Performs the Data Archiving and Networked Services file metadata analysis')
     parser.add_argument('-c', '--config', default='config.yaml')
 
     args = parser.parse_args()
