@@ -8,13 +8,8 @@ In order to extract this specific metadata, the `main` script filters data on th
 1. It iterates over all pages in the datasets index of the Archaeology Datastation (~120k results in ~12k pages)
 2. It extracts the digital object identifier (DOI) from the links to the datasets
 3. It rejects all datasets having a description "Files not yet migrated to Data Station"
-4. It accepts datasets with - Version: either
-  - Two versions, both published on the same day only the version with summary "This is the first published version.":
-    see: https://archaeology.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/dans-zbe-b8h5
-    It collects the file metadata of the first version.
-5. For each dataset, for each file it extracts the deposit date
-6. It logs the result cursor and metadata in order to resume on error
-7. It aggregates the file metadata into a counter per file type, per month
+4. It gets the versions metadata for the dataset
+5. It appends the versions metadata to a scrape log as ndjson-formatted file
 
 TODO:
   - One version labeled "EASY Migration":
