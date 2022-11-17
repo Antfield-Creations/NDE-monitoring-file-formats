@@ -1,7 +1,7 @@
 from http.client import HTTPSConnection
 
 from analysis.config import load_config
-from analysis.scrape_dans import scrape_version_metadata
+from analysis.dans_scrape import scrape_version_metadata
 
 
 def test_extractor() -> None:
