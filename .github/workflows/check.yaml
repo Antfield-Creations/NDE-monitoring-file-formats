@@ -6,6 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: install dependency manager
+        run: pip install pipenv
+
       - name: run checks
         run: make check
 
