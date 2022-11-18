@@ -13,7 +13,7 @@ jobs:
       - name: install dependency manager and dependencies
         run: |
           pip install pipenv
-          pipenv install
+          pipenv install --dev
 
       - name: run checks
         run: make check
