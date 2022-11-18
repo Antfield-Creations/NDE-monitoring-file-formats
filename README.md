@@ -29,6 +29,10 @@ to log into the virtual environment. The following analyses are available for yo
   requires that you have access to a large CSV file with file metadata. You can request this data from NIBG.
 - The Data Archiving and Networked services analysis is still a work in progress.
 
+### Changing the settings
+The code in this repository is mostly "config-driven". This means that there is a [config.yaml](config.yaml) in the root
+of this repository that configures which file formats are included in the analyses. You can tune them to your liking.   
+
 ## Using this repository as a library
 This code repository is installable using Pip(env), because there is a [setup.py](setup.py) installation script in the
 root of this project. In the library is a Python implementation of the Bass diffusion model. It allows you to generate
