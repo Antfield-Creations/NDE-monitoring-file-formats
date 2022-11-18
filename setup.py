@@ -3,8 +3,6 @@
 from configparser import ConfigParser
 from distutils.core import setup
 
-from setuptools import find_packages
-
 config = ConfigParser()
 config.read('Pipfile')
 dependencies = [dep.replace("\"", "") for dep in config['packages'].keys()]
@@ -18,6 +16,9 @@ setup(
       author_email='rein@vantveer.me',
       url='https://github.com/Antfield-Creations/NDE-monitoring-file-formats',
       install_requires=dependencies,
-      packages=find_packages(),
-      package_dir={'bass_diffusion': 'models'},
+      packages=['bass_diffusion', 'nde_analysis'],
+      package_dir={
+            'bass_diffusion': './models',
+            'nde_analysis': './analysis',
+      }
 )
