@@ -39,7 +39,7 @@ data for plots like this:
 You can use the installation command as follows:
 ```shell
 cd my_experimentation_folder
-pipenv install https://github.com/Antfield-Creations/NDE-monitoring-file-formats
+pipenv install git+https://github.com/Antfield-Creations/NDE-monitoring-file-formats#egg=bass_diffusion
 ```
 
 ### Usage
