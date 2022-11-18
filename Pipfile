@@ -9,7 +9,7 @@ name = "pypi"
 # For calculating statistics
 numpy = "*"
 # For simple linear regression
-sklearn = "*"
+scikit-learn = "*"
 # For fitting Bass diffusion model
 scipy = "*"
 # For plotting model graphs
