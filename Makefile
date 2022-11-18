@@ -1,4 +1,4 @@
-.PHONY: tests
+.PHONY: tests check
 
 tests:
 	pipenv run pytest
