@@ -1,0 +1,18 @@
+on: push
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: run checks
+        script: make check
+
+      - name: run tests
+        script: make tests
+
+      - name: integration-test the installable package
+        script: |
+          pip install git+https://github.com/Antfield-Creations/NDE-monitoring-file-formats#egg=bass_diffusion
+          python3 -c "from bass_diffusion import BassDiffusionModel; model = BassDiffusionModel()" 
