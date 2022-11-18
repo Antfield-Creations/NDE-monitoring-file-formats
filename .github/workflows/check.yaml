@@ -10,9 +10,12 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: install dependency manager and dependencies
+      - name: install dependency manager
         run: |
-          pip install pipenv
+          pip install --user pipenv
+
+      - name: install dependencies
+        run: |
           pipenv install --dev --deploy
 
       - name: run checks
