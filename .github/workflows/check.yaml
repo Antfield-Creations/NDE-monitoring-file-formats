@@ -14,5 +14,6 @@ jobs:
 
       - name: integration-test the installable package
         script: |
-          pip install git+https://github.com/Antfield-Creations/NDE-monitoring-file-formats#egg=bass_diffusion
+          echo "installing from ${{ github.ref_name }}
+          pip install git+https://github.com/Antfield-Creations/NDE-monitoring-file-formats@${{ github.ref_name }}#egg=bass_diffusion
           python3 -c "from bass_diffusion import BassDiffusionModel; model = BassDiffusionModel()" 
