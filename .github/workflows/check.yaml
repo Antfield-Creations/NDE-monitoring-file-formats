@@ -7,13 +7,13 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: run checks
-        script: make check
+        run: make check
 
       - name: run tests
-        script: make tests
+        run: make tests
 
       - name: integration-test the installable package
-        script: |
+        run: |
           echo "installing from ${{ github.ref_name }}
           pip install git+https://github.com/Antfield-Creations/NDE-monitoring-file-formats@${{ github.ref_name }}#egg=bass_diffusion
           python3 -c "from bass_diffusion import BassDiffusionModel; model = BassDiffusionModel()" 
