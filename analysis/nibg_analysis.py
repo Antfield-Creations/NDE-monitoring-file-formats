@@ -34,7 +34,7 @@ def main(config: Config) -> int:
     with open(aggregate_stats_path, 'rt') as f:
         aggregate_stats = json.loads(f.read())
 
-    quarterly_counts = to_sorted_quarterly(aggregate_stats)
+    quarterly_counts = to_pruned_sorted_quarterly(aggregate_stats)
     plot_counts(quarterly_counts, nibg_cfg)
 
     end = datetime.datetime.now()
@@ -43,7 +43,7 @@ def main(config: Config) -> int:
     return 0
 
 
-def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> SortedFileCount:
+def to_pruned_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> SortedFileCount:
     quarterly_counts: SortedFileCount = {}
 
     for file_type, monthly_counts in file_type_montly_counts.items():

@@ -21,9 +21,7 @@ def test_extractor() -> None:
     migrated_doi = 'doi:10.17026/dans-zbe-b8h5'
     file_metadata = scrape_version_metadata(migrated_doi, conn, dans_cfg)
     assert file_metadata is not None
-
-    filenames, date = file_metadata  # unpack
-    assert len(file_metadata) > 0, 'It should return metadata for a migrated dataset'
+    assert len(file_metadata.keys()) == 2, 'It should return metadata for a migrated dataset'
 
     # The deposit date should be 2013-02-14
-    assert date == '2013-02-14'
+    assert file_metadata['data'][0]['id'] == 105853
