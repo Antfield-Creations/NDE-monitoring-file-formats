@@ -22,7 +22,9 @@ jobs:
         run: make check
 
       - name: run tests
-        run: make tests
+        run: |
+          pipenv run python -c "import sklearn"
+          make tests
 
       - name: integration-test the installable package
         run: |
