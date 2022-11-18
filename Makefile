@@ -1,7 +1,7 @@
 .PHONY: tests check
 
 tests:
-	pipenv run pytest
+	pipenv run python -m pytest
 
 check:
 	pipenv run flake8 .
