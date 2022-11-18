@@ -54,7 +54,7 @@ def main(config: Config) -> int:
                 file_stats.setdefault(file_type, {})
                 year_month = timestamp[:6]
                 file_stats[file_type].setdefault(year_month, 0)
-                file_stats[file_type][year_month] += file_type
+                file_stats[file_type][year_month] += 1
 
     with open(dans_cfg['filetype_monthly_aggregate_path'], 'wt') as f:
         f.write(json.dumps(file_types))
