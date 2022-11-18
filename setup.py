@@ -10,7 +10,8 @@ config.read('Pipfile')
 dependencies = [dep.replace("\"", "") for dep in config['packages'].keys()]
 print(dependencies)
 
-setup(name='bass_diffusion',
+setup(
+      name='bass_diffusion',
       version='0.1.0',
       description='Python implementation of the Bass diffusion model',
       author="Rein van 't Veer",
@@ -19,4 +20,4 @@ setup(name='bass_diffusion',
       install_requires=dependencies,
       packages=find_packages(),
       package_dir={'bass_diffusion': 'models'},
-      )
+)
