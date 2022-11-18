@@ -25,8 +25,8 @@ pipenv shell
 
 to log into the virtual environment. The following analyses are available for you perusal:
 - The common crawl analysis: `pipenv run python -m analysis.common_crawl`
-- The Netherlands Institute for Sound and Vision (NIBG): `pipenv run python -m analysis.nibg_analysis`. This, however 
-  requires that you have access to a large CSV file with file metadata. You can request this data from NIBG.
+- The Netherlands Institute for Sound and Vision (NIBG): `pipenv run python -m analysis.nibg_analysis`. This uses the 
+  prebuilt [aggregated statistics for the filetypes per month](data/nibg/nibg_aggregate_stats.json).
 - The Data Archiving and Networked services analysis is still a work in progress.
 
 ### Changing the settings
