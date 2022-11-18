@@ -150,8 +150,8 @@ def plot_counts(counts: SortedFileCount, nibg_cfg: dict) -> None:
         plt.title(f"NIBG tellingen voor bestandstype {file_type}")
         plt.xticks(all_times, x_axis_labels, rotation=45)
         plt.legend(legend_data)
-        plt.show()
         plt.savefig(os.path.join(output_dir, f'{file_type}.png'))
+        plt.show()
 
 
 if __name__ == '__main__':
