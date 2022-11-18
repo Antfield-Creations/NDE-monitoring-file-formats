@@ -1,1 +1,1 @@
-from models.bass_diffusion import BassDiffusionModel
+from .bass_diffusion import BassDiffusionModel
