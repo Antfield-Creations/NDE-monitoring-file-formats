@@ -32,4 +32,4 @@ jobs:
           cd /tmp/bass
           echo "installing from ${{ github.ref_name }}"
           pipenv install git+https://github.com/Antfield-Creations/NDE-monitoring-file-formats@${{ github.ref_name }}#egg=bass_diffusion
-          python3 -c "from bass_diffusion import BassDiffusionModel; model = BassDiffusionModel()"
+          pipenv run python -c "from bass_diffusion import BassDiffusionModel; model = BassDiffusionModel()"
