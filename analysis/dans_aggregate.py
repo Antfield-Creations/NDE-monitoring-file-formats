@@ -47,15 +47,14 @@ def main(config: Config) -> int:
                 unusable_datasets += 1
                 continue
 
-            # Unpack the tuple now we know it's not empty
-            file_names, timestamp = result
+            filenames = extract_filenames(record, dans_cfg)
+            year_month = extract_year_month(record, dans_cfg)
 
             # Get the file extension from the filename if it contains a file extension identifiable by a dot
-            file_types = [f.split('.')[-1] for f in file_names if '.' in f]
+            file_types = [f.split('.')[-1] for f in filenames if '.' in f]
 
             for file_type in file_types:
                 file_stats.setdefault(file_type, {})
-                year_month = timestamp[:6]
                 file_stats[file_type].setdefault(year_month, 0)
                 file_stats[file_type][year_month] += 1
 
@@ -115,23 +114,47 @@ def is_valid_dataset(ds_metadata: dict) -> bool:
 
     return True
 
-    first_version = first_version_candidates[0]
-    citation_fields = first_version['metadataBlocks']['citation']['fields']
 
-    date_jsonpath = parse(dans_cfg['date_json_path'])
-    matches = date_jsonpath.find(ds_metadata)
-    # Return an empty result if there is not a singular date
-    if len(matches) != 1:
-        logging.error(f"Skipping {doi}: no date of deposit found")
-        return None
+def extract_filenames(ds_metadata: dict, dans_cfg: Dict[str, str]) -> List[str]:
+    """
+    Collects the filenames of the first version of the dataset.
 
-    deposit_date = matches[0].value
+    :param ds_metadata: Metadata dictionary for a dataset, gotten from the archaeology dataverse REST API
+    :param dans_cfg:    The DANS scrape and analysis configuration, from the config.yaml `dans` section
+
+    :return:    Either a tuple with a list of file types and a date for them,
+                or None if the data does not match the criteria
+    """
+    # Since the dataset is already validated, we can safely access the first 'data' entry with version 1
+    first_version = [version for version in ds_metadata['data']
+                     if version['versionNumber'] == 1 and version['versionMinorNumber'] == 0][0]
     filenames = [file['label']for file in first_version['files']]
 
     # Filter out unwanted files
     filenames = [file for file in filenames if file not in dans_cfg['file_skip_list']]
 
-    return filenames, deposit_date
+    return filenames
+
+
+def extract_year_month(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
+    """
+    Collects the correct date for the first version files
+    It aggregates the file metadata into a counter per file type, per month
+
+    :param ds_metadata: Metadata dictionary for a dataset, gotten from the archaeology dataverse REST API
+    :param dans_cfg:    The DANS scrape and analysis configuration, from the config.yaml `dans` section
+
+    :return: The extracted year and month in a single string formatted as "YYYY-mm"
+    """
+    date_jsonpath = parse(dans_cfg['date_json_path'])
+    matches = date_jsonpath.find(ds_metadata)
+    # Return an empty result if there is not a singular date
+    if len(matches) != 1:
+        raise ValueError(f"No date found for {ds_metadata=}: ")
+
+    queried_date = matches[0].value
+
+    return queried_date[:6]
 
 
 if __name__ == '__main__':
