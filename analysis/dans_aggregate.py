@@ -7,7 +7,7 @@ import datetime
 import json
 import logging
 from argparse import ArgumentParser
-from typing import Dict, Optional, Tuple, List
+from typing import Dict, List
 
 from jsonpath_ng.ext import parse
 from tqdm import tqdm
