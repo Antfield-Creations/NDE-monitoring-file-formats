@@ -9,6 +9,7 @@ import logging
 from argparse import ArgumentParser
 from typing import Dict, Optional, Tuple, List
 
+from jsonpath_ng.ext import parse
 from tqdm import tqdm
 
 from analysis.config import load_config, Config
@@ -42,11 +43,13 @@ def main(config: Config) -> int:
             record = json.loads(json_record)
             result = extract_file_metadata(record, dans_cfg)
 
+            # Projects that do not meet the requirements return None
             if result is None:
                 continue
 
             # Unpack the tuple now we know it's not empty
             file_names, timestamp = result
+
             # Get the file extension from the filename if it contains a file extension identifiable by a dot
             file_types = [f.split('.')[-1] for f in file_names if '.' in f]
 
@@ -81,7 +84,7 @@ def extract_file_metadata(ds_metadata: dict, dans_cfg: Dict[str, str]) -> Option
     :return:    Either a tuple with a list of file types and a date for them,
                 or None if the data does not match the criteria
     """
-    # sanity check!
+    # sanity check
     if 'data' not in ds_metadata.keys():
         logging.error(f'Metadata has no "data": {ds_metadata}')
         return None
@@ -114,13 +117,15 @@ def extract_file_metadata(ds_metadata: dict, dans_cfg: Dict[str, str]) -> Option
 
     first_version = first_version_candidates[0]
     citation_fields = first_version['metadataBlocks']['citation']['fields']
-    maybe_date_of_deposit = [field for field in citation_fields if field['typeName'] == 'dateOfDeposit']
-    # Return an empty result if there is not a singular deposit date
-    if len(maybe_date_of_deposit) != 1:
+
+    date_jsonpath = parse(dans_cfg['date_json_path'])
+    matches = date_jsonpath.find(ds_metadata)
+    # Return an empty result if there is not a singular date
+    if len(matches) != 1:
         logging.error(f"Skipping {doi}: no date of deposit found")
         return None
 
-    deposit_date = maybe_date_of_deposit[0]['value']
+    deposit_date = matches[0].value
     filenames = [file['label']for file in first_version['files']]
 
     # Filter out unwanted files
