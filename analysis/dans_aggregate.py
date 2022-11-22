@@ -43,8 +43,8 @@ def main(config: Config) -> int:
         for json_record in tqdm(f, total=record_count + 1):
             record = json.loads(json_record)
 
-            # Projects that do not meet the requirements return None
-            if result is None:
+            if not is_valid_dataset(record):
+                unusable_datasets += 1
                 continue
 
             # Unpack the tuple now we know it's not empty
@@ -71,37 +71,32 @@ def main(config: Config) -> int:
     return 0
 
 
-def extract_file_metadata(ds_metadata: dict, dans_cfg: Dict[str, str]) -> Optional[Tuple[List[str], str]]:
+def is_valid_dataset(ds_metadata: dict) -> bool:
     """
-    Analyses a metadata record from the archaeology datastation REST API
+    Analyses a metadata record from the archaeology datastation REST API to validate it for usage in this analysis
     It accepts datasets with:
       - Two versions, one version migrated from DANS EASY and one with preferred file formats
         example: https://archaeology.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/dans-zbe-b8h5
-    It collects the file metadata of the first version.
-    For each dataset, the correct date for the first version files
-    It aggregates the file metadata into a counter per file type, per month
 
-    :param ds_metadata: metadata dictionary for a dataset, gotten from the archaeology dataverse REST API
-    :param dans_cfg:    The DANS scrape and analysis configuration, from the config.yaml `dans` section
+    :param ds_metadata: Dictionary with keys and values from the Dataverse version API
 
-    :return:    Either a tuple with a list of file types and a date for them,
-                or None if the data does not match the criteria
+    :return: True if the dataset is valid, False if not
     """
     # sanity check
     if 'data' not in ds_metadata.keys():
         logging.error(f'Metadata has no "data": {ds_metadata}')
-        return None
+        return False
 
     versions = ds_metadata['data']
 
     # sanity check again
     if len(versions) == 0:
         logging.error(f'Metadata has no versions: {ds_metadata}')
-        return None
+        return False
 
     if 'datasetPersistentId' not in versions[0].keys():
         logging.error(f'Metadata version 1 has no persistent identifier: {ds_metadata}')
-        return None
+        return False
 
     doi = versions[0]['datasetPersistentId']
 
@@ -109,14 +104,16 @@ def extract_file_metadata(ds_metadata: dict, dans_cfg: Dict[str, str]) -> Option
     # and one offering the data in preferred formats
     if len(versions) != 2:
         logging.debug(f'Skipping: no two versions for {doi}, but {len(versions)}')
-        return None
+        return False
 
     # Return an empty result if there is no single version 1 of the dataset
-    first_version_candidates = [version for version in versions if version['versionNumber'] == 1]
+    first_version_candidates = [version for version in versions
+                                if version['versionNumber'] == 1 and version['versionMinorNumber'] == 0]
     if len(first_version_candidates) != 1:
-        version_numbers = [version['versionNumber'] for version in versions['data']]
-        logging.error(f"Skipping {doi}, no version 1 in {version_numbers}")
-        return None
+        logging.error(f"Skipping {doi}, no version 1 in {versions}")
+        return False
+
+    return True
 
     first_version = first_version_candidates[0]
     citation_fields = first_version['metadataBlocks']['citation']['fields']
