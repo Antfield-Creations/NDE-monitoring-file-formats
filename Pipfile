@@ -20,6 +20,7 @@ tqdm = "*"
 beautifulsoup4 = "*"
 # For re-trying http calls
 retry = "*"
+jsonpath-ng = "*"
 
 [dev-packages]
 flake8 = "*"
