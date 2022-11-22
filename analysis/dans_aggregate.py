@@ -33,15 +33,15 @@ def main(config: Config) -> int:
 
     # number of lines in the file
     with open(dans_cfg['scrape_log_path'], 'rt') as f:
-        for count, _ in enumerate(f):
+        for record_count, _ in enumerate(f):
             pass
 
-    logging.info(f'Log has {count + 1} entries')
+    logging.info(f'Log has {record_count + 1} entries')
+    unusable_datasets = 0
 
     with open(dans_cfg['scrape_log_path'], 'rt') as f:
-        for json_record in tqdm(f, total=count + 1):
+        for json_record in tqdm(f, total=record_count + 1):
             record = json.loads(json_record)
-            result = extract_file_metadata(record, dans_cfg)
 
             # Projects that do not meet the requirements return None
             if result is None:
@@ -60,7 +60,10 @@ def main(config: Config) -> int:
                 file_stats[file_type][year_month] += 1
 
     with open(dans_cfg['filetype_monthly_aggregate_path'], 'wt') as f:
-        f.write(json.dumps(file_types))
+        logging.info(f"Wrote aggregation to {dans_cfg['filetype_monthly_aggregate_path']}")
+        f.write(json.dumps(file_stats))
+
+    logging.info(f'{unusable_datasets} datasets out of {record_count + 1} were unfit for analysis.')
 
     end = datetime.datetime.now()
     logging.info(f'Script took {end - start}')
