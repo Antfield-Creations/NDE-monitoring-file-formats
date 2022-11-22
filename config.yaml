@@ -11,6 +11,7 @@ spec:
       dataset_versions_api_subpath: /api/v1/datasets/:persistentId/versions?persistentId={doi}
       scrape_log_path: data/dans/scrape_log.ndjson
       filetype_monthly_aggregate_path: data/dans/filetype_monthly.json
+      date_json_path: .data[?versionNumber=1].productionDate
       # Skip archaeology datastation ingestion artifacts
       file_skip_list:
         - dataset.xml
