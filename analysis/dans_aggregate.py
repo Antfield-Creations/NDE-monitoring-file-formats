@@ -37,14 +37,16 @@ def main(config: Config) -> int:
             pass
 
     logging.info(f'Log has {record_count + 1} entries')
-    unusable_datasets = 0
+    unusable_datasets: Dict[str, int] = {}
 
     with open(dans_cfg['scrape_log_path'], 'rt') as f:
         for json_record in tqdm(f, total=record_count + 1):
             record = json.loads(json_record)
 
-            if not is_valid_dataset(record):
-                unusable_datasets += 1
+            reason = explain_valid_dataset(record)
+            if reason != "Valid":
+                unusable_datasets.setdefault(reason, 0)
+                unusable_datasets[reason] += 1
                 continue
 
             filenames = extract_filenames(record, dans_cfg)
@@ -60,9 +62,9 @@ def main(config: Config) -> int:
 
     with open(dans_cfg['filetype_monthly_aggregate_path'], 'wt') as f:
         logging.info(f"Wrote aggregation to {dans_cfg['filetype_monthly_aggregate_path']}")
-        f.write(json.dumps(file_stats))
+        f.write(json.dumps(file_stats, indent=2))
 
-    logging.info(f'{unusable_datasets} datasets out of {record_count + 1} were unfit for analysis.')
+    logging.info(f'Unusable dataset reasons out of {record_count + 1}: {json.dumps(unusable_datasets, indent=2)}')
 
     end = datetime.datetime.now()
     logging.info(f'Script took {end - start}')
@@ -70,7 +72,7 @@ def main(config: Config) -> int:
     return 0
 
 
-def is_valid_dataset(ds_metadata: dict) -> bool:
+def explain_valid_dataset(ds_metadata: dict) -> str:
     """
     Analyses a metadata record from the archaeology datastation REST API to validate it for usage in this analysis
     It accepts datasets with:
@@ -83,36 +85,29 @@ def is_valid_dataset(ds_metadata: dict) -> bool:
     """
     # sanity check
     if 'data' not in ds_metadata.keys():
-        logging.error(f'Metadata has no "data": {ds_metadata}')
-        return False
+        return 'Metadata has no "data" key'
 
     versions = ds_metadata['data']
 
     # sanity check again
     if len(versions) == 0:
-        logging.error(f'Metadata has no versions: {ds_metadata}')
-        return False
+        return 'Metadata has no versions'
 
     if 'datasetPersistentId' not in versions[0].keys():
-        logging.error(f'Metadata version 1 has no persistent identifier: {ds_metadata}')
-        return False
-
-    doi = versions[0]['datasetPersistentId']
+        return 'Metadata version 1 has no persistent identifier'
 
     # Return an empty result if there are not two versions of the dataset: one of the original deposited data files,
     # and one offering the data in preferred formats
     if len(versions) != 2:
-        logging.debug(f'Skipping: no two versions for {doi}, but {len(versions)}')
-        return False
+        return f'No two versions, but {len(versions)}'
 
     # Return an empty result if there is no single version 1 of the dataset
     first_version_candidates = [version for version in versions
                                 if version['versionNumber'] == 1 and version['versionMinorNumber'] == 0]
     if len(first_version_candidates) != 1:
-        logging.error(f"Skipping {doi}, no version 1 in {versions}")
-        return False
+        return 'No single version 1.0 for dataset'
 
-    return True
+    return 'Valid'
 
 
 def extract_filenames(ds_metadata: dict, dans_cfg: Dict[str, str]) -> List[str]:
@@ -154,7 +149,7 @@ def extract_year_month(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
 
     queried_date = matches[0].value
 
-    return queried_date[:6]
+    return queried_date[:7]
 
 
 if __name__ == '__main__':
