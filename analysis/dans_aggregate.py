@@ -96,12 +96,7 @@ def explain_valid_dataset(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
     if 'datasetPersistentId' not in versions[0].keys():
         return 'Metadata version 1 has no persistent identifier'
 
-    # Return an empty result if there are not two versions of the dataset: one of the original deposited data files,
-    # and one offering the data in preferred formats
-    if len(versions) != 2:
-        return f'No two versions, but {len(versions)}'
-
-    # Return an empty result if there is no single version 1 of the dataset
+    # Return invalid if there is no single version 1 of the dataset
     first_version_candidates = [version for version in versions
                                 if version['versionNumber'] == 1 and version['versionMinorNumber'] == 0]
     if len(first_version_candidates) != 1:
