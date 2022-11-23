@@ -7,7 +7,7 @@ import datetime
 import json
 import logging
 from argparse import ArgumentParser
-from typing import Dict, List
+from typing import Dict
 
 from jsonpath_ng.ext import parse
 from tqdm import tqdm
@@ -49,16 +49,13 @@ def main(config: Config) -> int:
                 unusable_datasets[reason] += 1
                 continue
 
-            filenames = extract_filenames(record, dans_cfg)
+            content_type_counts = extract_content_type_counts(record, dans_cfg)
             year_month = extract_year_month(record, dans_cfg)
 
-            # Get the file extension from the filename if it contains a file extension identifiable by a dot
-            file_types = [f.split('.')[-1] for f in filenames if '.' in f]
-
-            for file_type in file_types:
-                file_stats.setdefault(file_type, {})
-                file_stats[file_type].setdefault(year_month, 0)
-                file_stats[file_type][year_month] += 1
+            for content_type, count in content_type_counts.items():
+                file_stats.setdefault(content_type, {})
+                file_stats[content_type].setdefault(year_month, 0)
+                file_stats[content_type][year_month] += count
 
     with open(dans_cfg['filetype_monthly_aggregate_path'], 'wt') as f:
         logging.info(f"Wrote aggregation to {dans_cfg['filetype_monthly_aggregate_path']}")
@@ -112,7 +109,7 @@ def explain_valid_dataset(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
     return 'Valid'
 
 
-def extract_filenames(ds_metadata: dict, dans_cfg: Dict[str, str]) -> List[str]:
+def extract_content_type_counts(ds_metadata: dict, dans_cfg: Dict[str, str]) -> Dict[str, int]:
     """
     Collects the filenames of the first version of the dataset.
 
@@ -123,14 +120,20 @@ def extract_filenames(ds_metadata: dict, dans_cfg: Dict[str, str]) -> List[str]:
                 or None if the data does not match the criteria
     """
     # Since the dataset is already validated, we can safely access the first 'data' entry with version 1
+    content_types: Dict[str, int] = {}
     first_version = [version for version in ds_metadata['data']
                      if version['versionNumber'] == 1 and version['versionMinorNumber'] == 0][0]
-    filenames = [file['label']for file in first_version['files']]
 
-    # Filter out unwanted files
-    filenames = [file for file in filenames if file not in dans_cfg['file_skip_list']]
+    for file in first_version['files']:
+        # Filter out unwanted files
+        if file['label'] in dans_cfg['file_skip_list']:
+            continue
 
-    return filenames
+        content_type = file['dataFile']['contentType']
+        content_types.setdefault(content_type, 0)
+        content_types[content_type] += 1
+
+    return content_types
 
 
 def extract_year_month(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
