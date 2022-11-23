@@ -43,7 +43,7 @@ def main(config: Config) -> int:
         for json_record in tqdm(f, total=record_count + 1):
             record = json.loads(json_record)
 
-            reason = explain_valid_dataset(record)
+            reason = explain_valid_dataset(record, dans_cfg)
             if reason != "Valid":
                 unusable_datasets.setdefault(reason, 0)
                 unusable_datasets[reason] += 1
@@ -72,7 +72,7 @@ def main(config: Config) -> int:
     return 0
 
 
-def explain_valid_dataset(ds_metadata: dict) -> str:
+def explain_valid_dataset(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
     """
     Analyses a metadata record from the archaeology datastation REST API to validate it for usage in this analysis
     It accepts datasets with:
@@ -106,6 +106,13 @@ def explain_valid_dataset(ds_metadata: dict) -> str:
                                 if version['versionNumber'] == 1 and version['versionMinorNumber'] == 0]
     if len(first_version_candidates) != 1:
         return 'No single version 1.0 for dataset'
+
+    date_jsonpath = parse(dans_cfg['date_json_path'])
+    matches = date_jsonpath.find(ds_metadata)
+
+    # Return invalid if there is not a singular date
+    if len(matches) != 1:
+        return "No date found"
 
     return 'Valid'
 
