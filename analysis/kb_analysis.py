@@ -53,12 +53,11 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
         time_sorted = sorted(time_sorted, key=lambda stats: stats[0])
 
         for year_month, count in time_sorted:
-            #year = year_month.split('-')[0]
-            #month = int(year_month.split('-')[1])
-            year = year_month
-            #quarter = math.ceil(month / 3)
-            #this_quarter = f'{year}Q{quarter}'
-            this_quarter = f'{year}Q'
+            year = year_month.split('-')[1]
+            month = int(year_month.split('-')[0])
+            quarter = math.ceil(month / 3)
+            this_quarter = f'{year}Q{quarter}'
+            
             type_counts = quarterly_counts[file_type]
             # Initialize a first count for the file type if it's empty
             if len(type_counts) == 0:
@@ -78,10 +77,9 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
                 # Add the new count
                 type_counts[-1]['count'] += count
 
-        #quarter = math.ceil(datetime.datetime.now().month / 3)
-        #current_quarter = f'{datetime.datetime.now().year}Q{quarter}'
-        current_quarter = f'{datetime.datetime.now().year}Q'
-
+        quarter = math.ceil(datetime.datetime.now().month / 3)
+        current_quarter = f'{datetime.datetime.now().year}Q{quarter}'
+        
         while quarterly_counts[file_type][-1]['period'] != current_quarter:
             last_measured = quarterly_counts[file_type][-1]['period']
             next_year, next_quarter = next_year_quarter(last_measured)
@@ -149,7 +147,7 @@ def plot_counts(counts: SortedFileCount, kb_cfg: dict) -> None:
 
         plt.plot(*plot_data)
         x_axis_labels = extract_year_ticks(quarters, separator='Q', index=0)
-        plt.title(f"NIBG tellingen voor bestandstype {file_type}")
+        plt.title(f"KB tellingen voor bestandstype {file_type}")
         plt.xticks(all_times, x_axis_labels, rotation=45)
         plt.legend(legend_data)
         plt.savefig(os.path.join(output_dir, f'{file_type}.png'))
