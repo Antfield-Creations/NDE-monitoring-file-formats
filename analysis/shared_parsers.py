@@ -96,12 +96,10 @@ def to_pruned_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -
                 # Add the new count
                 type_counts[-1]['count'] += count
 
-        quarter = math.ceil(datetime.datetime.now().month / 3)
-        current_quarter = f'{datetime.datetime.now().year}Q{quarter}'
-
-        while quarterly_counts[file_type][-1]['period'] != current_quarter:
-            last_measured = quarterly_counts[file_type][-1]['period']
-            next_year, next_quarter = next_year_quarter(last_measured)
+        last_period = quarterly_counts[file_type][-1]['period']
+        while last_period != current_year_quarter:
+            last_period = quarterly_counts[file_type][-1]['period']
+            next_year, next_quarter = next_year_quarter(last_period)
             quarterly_counts[file_type].append({
                 'period': f'{next_year}Q{next_quarter}', 'count': 0
             })
