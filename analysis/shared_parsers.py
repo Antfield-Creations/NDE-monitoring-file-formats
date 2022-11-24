@@ -75,20 +75,20 @@ def to_pruned_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -
 
             month = int(year_month.split('-')[1])
             quarter = math.ceil(month / 3)
-            this_quarter = f'{year}Q{quarter}'
+            year_quarter = f'{year}Q{quarter}'
 
             type_counts = quarterly_counts[file_type]
             # Initialize a first count for the file type if it's empty
             if len(type_counts) == 0:
-                type_counts.append({'period': this_quarter, 'count': 0})
+                type_counts.append({'period': year_quarter, 'count': 0})
 
             latest_quarter = type_counts[-1]['period']
-            if latest_quarter == this_quarter:
+            if latest_quarter == year_quarter:
                 # Add this month's count to the quarterly counts if the quarter is already there
                 type_counts[-1]['count'] += count
             else:
                 # Autofill zero-count in-between quarters
-                while type_counts[-1]['period'] != this_quarter:
+                while type_counts[-1]['period'] != year_quarter:
                     last_period = type_counts[-1]['period']
                     next_year, next_quarter = next_year_quarter(last_period)
                     type_counts.append({'period': f'{next_year}Q{next_quarter}', 'count': 0})
