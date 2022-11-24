@@ -72,11 +72,9 @@ def main(config: Config) -> int:
 def explain_valid_dataset(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
     """
     Analyses a metadata record from the archaeology datastation REST API to validate it for usage in this analysis
-    It accepts datasets with:
-      - Two versions, one version migrated from DANS EASY and one with preferred file formats
-        example: https://archaeology.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/dans-zbe-b8h5
 
     :param ds_metadata: Dictionary with keys and values from the Dataverse version API
+    :param dans_cfg: Simple key-value settings, found under config.yaml data -> dans
 
     :return: True if the dataset is valid, False if not
     """
