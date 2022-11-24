@@ -51,6 +51,10 @@ def next_year_quarter(last_period: str) -> Tuple[int, int]:
 def to_pruned_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> SortedFileCount:
     quarterly_counts: SortedFileCount = {}
 
+    current_quarter = math.ceil(datetime.datetime.now().month / 3)
+    current_year = datetime.datetime.now().year
+    current_year_quarter = f'{current_year}Q{current_quarter}'
+
     for file_type, monthly_counts in file_type_montly_counts.items():
         quarterly_counts.setdefault(file_type, [])
 
