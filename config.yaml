@@ -19,6 +19,8 @@ spec:
         - files.xml
         - provenance.xml
 
+      minimum_time_periods: 10
+
     nibg:
       raw_csv_path: ~/data/NDE/digital_files.csv
       raw_csv_line_count: 4741017
