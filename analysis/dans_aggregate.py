@@ -158,7 +158,7 @@ def extract_year_month(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser('Performs the Data Archiving and Networked Services file metadata analysis')
+    parser = ArgumentParser('Performs the Data Archiving and Networked Services file metadata aggregation')
     parser.add_argument('-c', '--config', default='config.yaml')
 
     args = parser.parse_args()
