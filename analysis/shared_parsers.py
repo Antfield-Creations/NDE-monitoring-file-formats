@@ -64,7 +64,15 @@ def to_pruned_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -
         time_sorted = sorted(time_sorted, key=lambda stats: stats[0])
 
         for year_month, count in time_sorted:
-            year = year_month.split('-')[0]
+            if re.match(pattern=r'\d{4}-\d{2}', string=year_month) is None:
+                logging.warning(f'Expected year-month formatted YYYY-mm, got {year_month}, skipping')
+                continue
+
+            year = int(year_month.split('-')[0])
+            if year > current_year:
+                logging.warning(f'Expected year entry not to be in the future, got {year}, skipping')
+                continue
+
             month = int(year_month.split('-')[1])
             quarter = math.ceil(month / 3)
             this_quarter = f'{year}Q{quarter}'
