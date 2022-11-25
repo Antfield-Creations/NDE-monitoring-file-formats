@@ -30,7 +30,7 @@ def main(config: Config) -> int:
     for (filetype, counts_for_type) in sorted(filetype_counts, key=lambda x: x[1], reverse=True):
         logging.info(f'{filetype} has a total of {counts_for_type} files')
 
-    quarterly_stats = to_pruned_sorted_quarterly(file_type_montly_counts=monthly_stats)
+    quarterly_stats = to_pruned_sorted_quarterly(monthly_stats)
 
     # Keep only file types with more than the configured number of measurements and which are part of the selection
     keep_filetypes: List[str] = []
