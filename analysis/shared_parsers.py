@@ -65,7 +65,7 @@ def to_pruned_sorted_quarterly(filetype_monthly_counts: PeriodicFiletypeCount) -
     current_year = datetime.datetime.now().year
     current_year_quarter = f'{current_year}Q{current_quarter}'
 
-    for file_type, monthly_counts in file_type_montly_counts.items():
+    for file_type, monthly_counts in filetype_monthly_counts.items():
         quarterly_counts.setdefault(file_type, [])
 
         time_sorted = list(monthly_counts.items())
