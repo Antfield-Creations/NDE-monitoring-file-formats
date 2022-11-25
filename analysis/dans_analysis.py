@@ -6,7 +6,7 @@ from typing import List, Tuple
 import numpy as np
 
 from analysis.config import Config, load_config
-from analysis.shared_parsers import to_pruned_sorted_quarterly, PeriodicFiletypeCount
+from analysis.shared_parsers import to_pruned_sorted_quarterly, PeriodicFiletypeCount, plot_counts
 
 
 def main(config: Config) -> int:
