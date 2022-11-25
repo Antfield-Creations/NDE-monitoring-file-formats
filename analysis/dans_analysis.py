@@ -61,6 +61,9 @@ def main(config: Config) -> int:
         keep_filetypes.append(filetype)
 
     logging.info(f'Keeping {len(keep_filetypes)} filetypes for analysis: {keep_filetypes}')
+    kept_counts = {filetype: counts for filetype, counts in quarterly_stats.items() if filetype in keep_filetypes}
+    plot_counts(kept_counts, dans_cfg)
+
     return 0
 
 
