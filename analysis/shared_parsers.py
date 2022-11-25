@@ -121,11 +121,18 @@ def to_pruned_sorted_quarterly(filetype_monthly_counts: PeriodicFiletypeCount) -
     return quarterly_counts
 
 
-def to_sorted_yearly(file_type_montly_counts: PeriodicFiletypeCount) -> SortedFileCount:
+def to_sorted_yearly(filetype_monthly_counts: PeriodicFiletypeCount) -> SortedFileCount:
+    """
+    Helper function to build a list of sorted yearly counts, based on monthly counts per file type
+
+    :param filetype_monthly_counts: A dictionary with file types and counts per month as values
+
+    :return: A dictionary of file types as keys and a sorted list of years and  corresponding summed counts
+    """
     current_year = datetime.datetime.now().year
     year_counts: SortedFileCount = {}
 
-    for file_type, monthly_counts in file_type_montly_counts.items():
+    for file_type, monthly_counts in filetype_monthly_counts.items():
         year_counts.setdefault(file_type, [])
 
         time_sorted = list(monthly_counts.items())
@@ -136,10 +143,33 @@ def to_sorted_yearly(file_type_montly_counts: PeriodicFiletypeCount) -> SortedFi
                 logging.warning(f'Expected year-month formatted YYYY-mm, got {year_month}, skipping')
                 continue
 
-            year = int(year_month.split('-')[0])
-            if year > current_year:
+            year = year_month.split('-')[0]
+            if int(year) > current_year:
                 logging.warning(f'Expected year entry not to be in the future, got {year}, skipping')
                 continue
+
+            type_counts = year_counts[file_type]
+            # Initialize a first count for the file type if the list of counts is empty
+            if len(type_counts) == 0:
+                type_counts.append({'period': year, 'count': 0})
+
+            last_period = type_counts[-1]['period']
+            # Autofill zero-count in-between periods: append zero counts for all missing periods until latest year
+            while type_counts[-1]['period'] != str(year):
+                type_counts.append({'period': str(int(type_counts[-1]['period']) + 1), 'count': 0})
+
+            # Add this month's count to the quarterly counts if the quarter is already there
+            type_counts[-1]['count'] += count
+
+        # Autofill zero-count periods after the last one if the last period isn't the current year
+        while year_counts[file_type][-1]['period'] != str(current_year):
+            last_period = year_counts[file_type][-1]['period']
+            year_counts[file_type].append({
+                'period': str(int(last_period) + 1), 'count': 0
+            })
+
+        # Chop off the current quarter: counts may still be incomplete
+        year_counts[file_type].pop(-1)
 
     return year_counts
 
@@ -164,7 +194,13 @@ def plot_counts(counts: SortedFileCount, cfg: dict) -> None:
         bass_model = BassDiffusionModel()
         train_inputs = np.array(train_times)
         test_inputs = np.array(test_times)
-        bass_model.fit(train_inputs, np.array(train_counts))
+
+        try:
+            bass_model.fit(train_inputs, np.array(train_counts))
+        except RuntimeError as e:
+            logging.error(f'Unable to fit Bass model based on train inputs {train_counts}: {e}')
+            continue
+
         fitted_values = bass_model.sales_at_time(bass_model.bass_parameters, train_inputs)
         projected_values = bass_model.sales_at_time(bass_model.bass_parameters, test_inputs)
 
