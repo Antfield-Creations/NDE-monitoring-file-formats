@@ -4,6 +4,7 @@ spec:
 
   data:
     dans:
+      # Scrape settings
       root_url: https://archaeology.datastations.nl
       page_subpath: /dataverse/root?q=&types=dataverses%3Adatasets&sort=dateSort&order=desc&page={page}
       start_page: 1
@@ -19,6 +20,7 @@ spec:
         - files.xml
         - provenance.xml
 
+      # Analysis settings
       minimum_time_periods: 10
       # The number of last periods to measure if there was a decline
       decline_periods: 8
