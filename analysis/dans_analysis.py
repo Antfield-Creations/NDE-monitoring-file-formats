@@ -6,7 +6,7 @@ from typing import List, Tuple
 import numpy as np
 
 from analysis.config import Config, load_config
-from analysis.shared_parsers import to_pruned_sorted_quarterly, PeriodicFiletypeCount, plot_counts
+from analysis.shared_parsers import PeriodicFiletypeCount, plot_counts, to_sorted_yearly
 
 
 def main(config: Config) -> int:
@@ -30,11 +30,11 @@ def main(config: Config) -> int:
     for (filetype, counts_for_type) in sorted(filetype_counts, key=lambda x: x[1], reverse=True):
         logging.info(f'{filetype} has a total of {counts_for_type} files')
 
-    quarterly_stats = to_pruned_sorted_quarterly(monthly_stats)
+    yearly_stats = to_sorted_yearly(monthly_stats)
 
     # Keep only file types with more than the configured number of measurements and which are part of the selection
     keep_filetypes: List[str] = []
-    for filetype, quarterly_counts in quarterly_stats.items():
+    for filetype, quarterly_counts in yearly_stats.items():
         counts_reversed = list(reversed(quarterly_counts))
 
         # prune 0-counts
@@ -61,7 +61,7 @@ def main(config: Config) -> int:
         keep_filetypes.append(filetype)
 
     logging.info(f'Keeping {len(keep_filetypes)} filetypes for analysis: {keep_filetypes}')
-    kept_counts = {filetype: counts for filetype, counts in quarterly_stats.items() if filetype in keep_filetypes}
+    kept_counts = {filetype: counts for filetype, counts in yearly_stats.items() if filetype in keep_filetypes}
     plot_counts(kept_counts, dans_cfg)
 
     return 0
