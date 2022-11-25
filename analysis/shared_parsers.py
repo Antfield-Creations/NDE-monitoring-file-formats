@@ -28,6 +28,5 @@ def next_year_quarter(last_period: str) -> Tuple[int, int]:
     last_measured_quarter = int(last_period.split('Q')[1])
     next_quarter = last_measured_quarter + 1 if last_measured_quarter < 4 else 1
     year = last_measured_year if next_quarter > 1 else last_measured_year + 1
-    print(year)
 
     return year, next_quarter

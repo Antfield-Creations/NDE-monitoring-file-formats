@@ -3,6 +3,7 @@ import json
 import logging
 import math
 import os
+import re
 from argparse import ArgumentParser
 from typing import Dict, List, TypedDict
 
@@ -45,6 +46,9 @@ def main(config: Config) -> int:
 
 def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> SortedFileCount:
     quarterly_counts: SortedFileCount = {}
+    
+    # hack for the KB data
+    current_year = int(2014)
 
     for file_type, monthly_counts in file_type_montly_counts.items():
         quarterly_counts.setdefault(file_type, [])
@@ -53,8 +57,20 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
         time_sorted = sorted(time_sorted, key=lambda stats: stats[0])
 
         for year_month, count in time_sorted:
-            year = year_month.split('-')[1]
-            month = int(year_month.split('-')[0])
+            # Make sure the year/month string is properly formatted
+            if re.match(pattern=r'\d{4}-\d{2}', string=year_month) is None:
+                logging.warning(f'Expected year-month formatted YYYY-mm, got {year_month}, skipping')
+                continue
+
+            # Make sure that the year is not in the future, otherwise the autofill of intermediate
+            # Missing 0-count periods until the current period end only until your memory runs out
+            year = int(year_month.split('-')[0])
+            print("year" + str(year))
+            if year > current_year:
+                logging.warning(f'Expected year entry not to be in the future, got {year}, skipping')
+                continue
+            
+            month = int(year_month.split('-')[1])
             quarter = math.ceil(month / 3)
             this_quarter = f'{year}Q{quarter}'
             
@@ -78,8 +94,13 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
                 # Add the new count
                 type_counts[-1]['count'] += count
 
-        quarter = math.ceil(datetime.datetime.now().month / 3)
-        current_quarter = f'{datetime.datetime.now().year}Q{quarter}'
+        # hack for the KB data
+        #quarter = math.ceil(datetime.datetime.now().month / 3)
+        #current_quarter = f'{datetime.datetime.now().year}Q{quarter}'
+        month_now = int(12)
+        year_now = int(2014)
+        quarter = math.ceil(month_now / 3)
+        current_quarter = f'{year_now}Q{quarter}'
         
         while quarterly_counts[file_type][-1]['period'] != current_quarter:
             last_measured = quarterly_counts[file_type][-1]['period']
