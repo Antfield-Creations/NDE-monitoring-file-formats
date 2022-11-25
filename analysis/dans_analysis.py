@@ -3,13 +3,16 @@ import logging
 from argparse import ArgumentParser
 from typing import List, Tuple
 
+import numpy as np
+
 from analysis.config import Config, load_config
 from analysis.shared_parsers import to_pruned_sorted_quarterly, PeriodicFiletypeCount
 
 
 def main(config: Config) -> int:
+    dans_cfg = config['data']['dans']
 
-    with open(config['data']['dans']['filetype_monthly_aggregate_path'], 'rt') as f:
+    with open(dans_cfg['filetype_monthly_aggregate_path'], 'rt') as f:
         monthly_stats: PeriodicFiletypeCount = json.loads(f.read())
 
     filecount_sum = 0
@@ -28,8 +31,31 @@ def main(config: Config) -> int:
         logging.info(f'{filetype} has a total of {counts_for_type} files')
 
     quarterly_stats = to_pruned_sorted_quarterly(file_type_montly_counts=monthly_stats)
-    logging.info(quarterly_stats)
 
+    # Keep only file types with more than the configured number of measurements
+    keep_filetypes: List[str] = []
+    for filetype, quarterly_counts in quarterly_stats.items():
+        counts_reversed = list(reversed(quarterly_counts))
+
+        # prune 0-counts
+        while counts_reversed[0]['count'] == 0:
+            counts_reversed.pop(0)
+
+        if len(counts_reversed) < dans_cfg['minimum_time_periods']:
+            continue
+
+        # Take the last quarters to assess if the file type was in decline
+        maybe_declining_period = quarterly_counts[-dans_cfg['decline_periods']:]
+        quarterly_changes = np.diff([p['count'] for p in maybe_declining_period])
+
+        # Ignore the file types with stable or increasing number quarterly_changes
+        if quarterly_changes.mean() >= 0:
+            continue
+
+        # Keep the rest
+        keep_filetypes.append(filetype)
+
+    logging.info(f'Keeping {len(keep_filetypes)} filetypes for analysis: {keep_filetypes}')
     return 0
 
 
