@@ -22,6 +22,12 @@ spec:
       minimum_time_periods: 10
       # The number of last periods to measure if there was a decline
       decline_periods: 8
+      mime_plots:
+        - application/pdf
+        - text/tsv
+        - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        - application/shp
+        - application/x-msaccess
 
     nibg:
       raw_csv_path: ~/data/NDE/digital_files.csv

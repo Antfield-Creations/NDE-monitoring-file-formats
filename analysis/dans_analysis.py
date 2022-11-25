@@ -32,7 +32,7 @@ def main(config: Config) -> int:
 
     quarterly_stats = to_pruned_sorted_quarterly(file_type_montly_counts=monthly_stats)
 
-    # Keep only file types with more than the configured number of measurements
+    # Keep only file types with more than the configured number of measurements and which are part of the selection
     keep_filetypes: List[str] = []
     for filetype, quarterly_counts in quarterly_stats.items():
         counts_reversed = list(reversed(quarterly_counts))
@@ -50,6 +50,11 @@ def main(config: Config) -> int:
 
         # Ignore the file types with stable or increasing number quarterly_changes
         if quarterly_changes.mean() >= 0:
+            continue
+
+        # We do the exercise above because the mime types included in the "mime_plots" list was decided based on the
+        # filters above
+        if filetype not in dans_cfg['mime_plots']:
             continue
 
         # Keep the rest
