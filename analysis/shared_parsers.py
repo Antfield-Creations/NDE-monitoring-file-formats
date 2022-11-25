@@ -72,10 +72,13 @@ def to_pruned_sorted_quarterly(filetype_monthly_counts: PeriodicFiletypeCount) -
         time_sorted = sorted(time_sorted, key=lambda stats: stats[0])
 
         for year_month, count in time_sorted:
+            # Make sure the year/month string is properly formatted
             if re.match(pattern=r'\d{4}-\d{2}', string=year_month) is None:
                 logging.warning(f'Expected year-month formatted YYYY-mm, got {year_month}, skipping')
                 continue
 
+            # Make sure that the year is not in the future, otherwise the autofill of intermediate
+            # Missing 0-count periods until the current period end only until your memory runs out
             year = int(year_month.split('-')[0])
             if year > current_year:
                 logging.warning(f'Expected year entry not to be in the future, got {year}, skipping')
