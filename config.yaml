@@ -22,7 +22,7 @@ spec:
     nibg:
       raw_csv_path: ~/data/NDE/digital_files.csv
       raw_csv_line_count: 4741017
-      minimum_time_periods: 10
+      minimum_time_periods: 100
       json_output_dir: data/nibg/
       img_output_dir: images/nibg/
       num_test_measurements: 4
@@ -33,6 +33,40 @@ spec:
         - pdf
         - mpg
         - mp3
+        
+    kb:
+      raw_csv_path: data/kbData.csv
+      raw_csv_line_count: 5048327
+      minimum_time_periods: 10
+      json_output_dir: data/
+      img_output_dir: images/kb/
+      num_test_measurements: 4
+      linear_plots:
+        - application/msaccess
+        - application/msexcel
+        - application/mspowerpoint
+        - application/msword
+        - application/octet-stream
+        - application/pdf
+        - application/postscript
+        - application/rtf
+        - application/wordperfect
+        - application/x-shockwave-flash
+        - application/x-tar
+        - application/zip
+        - audio/mpeg
+        - audio/x-wav
+        - image/bmp
+        - image/gif
+        - image/jpeg
+        - image/tiff
+        - image/x-png
+        - text/css
+        - text/html
+        - text/plain
+        - video/mpeg
+        - video/quicktime
+        - video/x-msvideo
 
     common_crawl:
       # Metadata url
