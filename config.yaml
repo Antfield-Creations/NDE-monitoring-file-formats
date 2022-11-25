@@ -21,11 +21,11 @@ spec:
         - provenance.xml
 
       # Analysis settings
-      minimum_time_periods: 10
+      minimum_time_periods: 8
       # The number of last periods to measure if there was a decline
-      decline_periods: 8
+      decline_periods: 2
       img_output_dir: images/dans/
-      num_test_measurements: 4
+      num_test_measurements: 3
       mime_plots:
         - application/pdf
         - text/tsv
