@@ -22,7 +22,7 @@ spec:
       raw_csv_path: ~/data/NDE/digital_files.csv
       raw_csv_line_count: 4741017
       minimum_time_periods: 100
-      json_output_dir: data/
+      json_output_dir: data/nibg/
       img_output_dir: images/nibg/
       num_test_measurements: 4
       linear_plots:
@@ -34,7 +34,7 @@ spec:
         - mp3
         
     kb:
-      raw_csv_path: kbData.csv
+      raw_csv_path: data/kbData.csv
       raw_csv_line_count: 5048327
       minimum_time_periods: 10
       json_output_dir: data/
