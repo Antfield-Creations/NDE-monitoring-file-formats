@@ -27,6 +27,26 @@ PeriodicFiletypeCount = Dict[Filetype, Dict[str, int]]
 SortedFileCount = Dict[Filetype, List[PeriodCount]]
 
 
+def all_filetype_counts(periodic_stats: SortedFileCount) -> SortedFileCount:
+    periodic_combined: SortedFileCount = {'all': []}
+    for filetype, period_counts in periodic_stats.items():
+        for period_count in period_counts:
+            already_periods = {count['period']: idx for idx, count in enumerate(periodic_combined['all'])}
+
+            if period_count['period'] in already_periods.keys():
+                period_idx = already_periods[period_count['period']]
+                period_counts[period_idx]['count'] += period_count['count']
+                # Next!
+                continue
+
+            if len(periodic_combined['all']) == 0:
+                periodic_combined['all'].append(period_count)
+
+            # We need to keep the list sorted
+
+    return periodic_combined
+
+
 def extract_year_ticks(time_labels: List[str], separator: str = '-', index: int = 2) -> List[str]:
     year_labels = []
 
