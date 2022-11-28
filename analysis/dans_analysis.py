@@ -69,11 +69,6 @@ def filter_stats(yearly_stats: SortedFileCount, dans_cfg: dict) -> List[str]:
         if yearly_changes.mean() >= 0:
             continue
 
-        # We do the exercise above because the mime types included in the "mime_plots" list was decided based on the
-        # filters above
-        if filetype not in dans_cfg['mime_plots']:
-            continue
-
         count_idx = 0
         while count_idx < len(yearly_counts):
             year = int(yearly_counts[count_idx]['period'][:5])
