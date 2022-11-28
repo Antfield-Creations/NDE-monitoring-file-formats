@@ -22,8 +22,8 @@ spec:
 
       # Aggregation settings
       filetype_mapping:
-        tiff: tif
-        jpeg: jpg
+        .tiff: .tif
+        .jpeg: .jpg
 
       # Analysis settings
       minimum_time_periods: 8
