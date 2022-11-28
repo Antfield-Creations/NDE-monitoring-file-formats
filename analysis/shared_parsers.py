@@ -234,7 +234,7 @@ def plot_counts(counts: SortedFileCount, cfg: dict) -> None:
 
         plt.plot(*plot_data)
         x_axis_labels = extract_year_ticks(quarters, separator='Q', index=0)
-        plt.title(f"NIBG tellingen voor bestandstype {file_type}")
+        plt.title(f"Tellingen per periode voor bestandstype {file_type}")
         plt.xticks(all_times, x_axis_labels, rotation=45)
         plt.legend(legend_data)
         os.makedirs(output_dir, exist_ok=True)
