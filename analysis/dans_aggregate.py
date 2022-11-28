@@ -7,6 +7,7 @@ import datetime
 import json
 import logging
 from argparse import ArgumentParser
+from os.path import splitext
 from typing import Dict
 
 from jsonpath_ng.ext import parse
@@ -107,7 +108,7 @@ def explain_valid_dataset(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
     return 'Valid'
 
 
-def extract_content_type_counts(ds_metadata: dict, dans_cfg: Dict[str, str]) -> Dict[str, int]:
+def extract_content_type_counts(ds_metadata: dict, dans_cfg: dict) -> Dict[str, int]:
     """
     Collects the filenames of the first version of the dataset.
 
@@ -127,9 +128,11 @@ def extract_content_type_counts(ds_metadata: dict, dans_cfg: Dict[str, str]) -> 
         if file['label'] in dans_cfg['file_skip_list']:
             continue
 
-        content_type = file['dataFile']['contentType']
-        content_types.setdefault(content_type, 0)
-        content_types[content_type] += 1
+        filetype = splitext(file['label'])[1].lower()
+        if filetype in dans_cfg['filetype_mapping'].keys():
+            filetype = dans_cfg['filetype_mapping'][filetype]
+        content_types.setdefault(filetype, 0)
+        content_types[filetype] += 1
 
     return content_types
 
