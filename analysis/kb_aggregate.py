@@ -36,7 +36,7 @@ def main(config: Config) -> int:
             file_temp_stats.setdefault(mimetype, {})
 
             year_month = '-'.join(reversed(create_date.split('-')[1:3]))
-            #year_month = create_date.split('-')[2:3][0]
+            # year_month = create_date.split('-')[2:3][0]
             file_temp_stats[mimetype].setdefault(year_month, 0)
             file_temp_stats[mimetype][year_month] += 1
 
