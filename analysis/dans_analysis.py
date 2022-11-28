@@ -20,7 +20,7 @@ def main(config: Config) -> int:
         filecount_sum += sum(counts.values())
 
     logging.info(f'Total file count: {filecount_sum}')
-    logging.info(f'DANS analysis has {len(monthly_stats.keys())} file types (reverse-sorted by count:')
+    logging.info(f'DANS analysis has {len(monthly_stats.keys())} file types (reverse-sorted by count):')
 
     filetype_counts: List[Tuple[str, int]] = []
     for filetype, monthly_counts in monthly_stats.items():
