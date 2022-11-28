@@ -45,6 +45,11 @@ def main(config: Config) -> int:
 def filter_stats(yearly_stats: SortedFileCount, dans_cfg: dict) -> List[str]:
     keep_filetypes: List[str] = []
     for filetype, yearly_counts in yearly_stats.items():
+        # We do the exercise below because the mime types included in the "mime_plots" list was decided based on the
+        # filters below
+        if filetype not in dans_cfg['mime_plots']:
+            continue
+
         counts_reversed = list(reversed(yearly_counts))
 
         # prune 0-counts
