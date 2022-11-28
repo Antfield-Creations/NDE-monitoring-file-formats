@@ -33,11 +33,14 @@ spec:
       img_output_dir: images/dans/
       num_test_measurements: 2
       mime_plots:
-        - application/pdf
-        - text/tsv
-        - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-        - application/shp
-        - application/x-msaccess
+        - pdf
+        - xlsx
+        - xls
+        - tab
+        - shp
+        - gpkg
+        - mdb
+        - accdb
       linear_plots:
         - application/pdf
         - text/tsv
