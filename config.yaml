@@ -31,7 +31,7 @@ spec:
       # The number of last periods to measure if there was a decline
       decline_periods: 2
       img_output_dir: images/dans/
-      num_test_measurements: 3
+      num_test_measurements: 2
       mime_plots:
         - application/pdf
         - text/tsv
