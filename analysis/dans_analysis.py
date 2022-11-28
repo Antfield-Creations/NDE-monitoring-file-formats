@@ -51,6 +51,8 @@ def filter_stats(yearly_stats: SortedFileCount, dans_cfg: dict) -> List[str]:
             continue
 
         counts_reversed = list(reversed(yearly_counts))
+        if len(counts_reversed) == 0:
+            continue
 
         # prune 0-counts
         while counts_reversed[0]['count'] == 0:
