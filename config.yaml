@@ -33,14 +33,14 @@ spec:
       img_output_dir: images/dans/
       num_test_measurements: 2
       mime_plots:
-        - pdf
-        - xlsx
-        - xls
-        - tab
-        - shp
-        - gpkg
-        - mdb
-        - accdb
+        - .pdf
+        - .xlsx
+        - .xls
+        - .tab
+        - .shp
+        - .gpkg
+        - .mdb
+        - .accdb
       linear_plots:
         - application/pdf
         - text/tsv
