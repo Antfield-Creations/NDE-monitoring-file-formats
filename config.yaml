@@ -20,6 +20,11 @@ spec:
         - files.xml
         - provenance.xml
 
+      # Aggregation settings
+      filetype_mapping:
+        tiff: tif
+        jpeg: jpg
+
       # Analysis settings
       minimum_time_periods: 8
       # The number of last periods to measure if there was a decline
