@@ -1,12 +1,15 @@
 import json
 import logging
+import os
 from argparse import ArgumentParser
 from typing import List, Tuple
 
 import numpy as np
+from matplotlib import pyplot as plt
 
 from analysis.config import Config, load_config
-from analysis.shared_parsers import PeriodicFiletypeCount, plot_counts, to_sorted_yearly, SortedFileCount
+from analysis.shared_parsers import PeriodicFiletypeCount, plot_counts, to_sorted_yearly, SortedFileCount, \
+    all_filetype_counts, extract_year_ticks
 
 
 def main(config: Config) -> int:
@@ -31,6 +34,24 @@ def main(config: Config) -> int:
 
     # Aggregate to counts per year
     yearly_stats = to_sorted_yearly(monthly_stats)
+
+    # Aggregate to periodic counts for all file types combined
+    all_filetypes_yearly_counts = all_filetype_counts(yearly_stats)
+    all_counts = [period_count['count'] for period_count in all_filetypes_yearly_counts['all']]
+    all_periods = [period_count['period'] for period_count in all_filetypes_yearly_counts['all']]
+    first_valid_idx = all_periods.index(str(dans_cfg['min_year']))
+    all_counts = all_counts[first_valid_idx:]
+    all_periods = all_periods[first_valid_idx:]
+
+    # Generate plot for all file types combined
+    plt.plot(list(range(len(all_counts))), all_counts)
+    x_axis_labels = extract_year_ticks(all_periods, separator=' ', index=0)
+    plt.title("Tellingen per periode voor alle bestandstypen gecombineerd")
+    plt.xticks(list(range(len(all_counts))), x_axis_labels, rotation=45)
+    plt.legend(['Aantal bestanden'])
+    output_dir = dans_cfg['img_output_dir']
+    plt.savefig(os.path.join(output_dir, 'all-filetypes.png'))
+    plt.show()
 
     # Keep only file types with more than the configured number of measurements and which are part of the selection
     keep_filetypes = filter_stats(yearly_stats, dans_cfg)
