@@ -39,18 +39,19 @@ def all_filetype_counts(periodic_stats: SortedFileCount) -> SortedFileCount:
     periodic_combined: SortedFileCount = {'all': []}
     for period_counts in periodic_stats.values():
         for period_count in period_counts:
+            # Add a new period entry if it isn't listed yet
             already_periods = {count['period']: idx for idx, count in enumerate(periodic_combined['all'])}
+            if period_count['period'] not in already_periods.keys():
+                periodic_combined['all'].append({'period': period_count['period'], 'count': 0})
+                # Update the available periods that have already been added
+                already_periods = {count['period']: idx for idx, count in enumerate(periodic_combined['all'])}
 
-            if period_count['period'] in already_periods.keys():
-                period_idx = already_periods[period_count['period']]
-                period_counts[period_idx]['count'] += period_count['count']
-                # Next!
-                continue
+            # Update the counts for an already listed period
+            period_idx = already_periods[period_count['period']]
+            periodic_combined['all'][period_idx]['count'] += period_count['count']
 
-            if len(periodic_combined['all']) == 0:
-                periodic_combined['all'].append(period_count)
-
-            # We need to keep the list sorted
+    # Now, the list has become unsorted because we iterated over all file types first, so we sort again
+    periodic_combined['all'] = sorted(periodic_combined['all'], key=lambda counts: counts['period'])
 
     return periodic_combined
 
