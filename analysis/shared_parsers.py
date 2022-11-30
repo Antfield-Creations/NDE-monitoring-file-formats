@@ -28,6 +28,14 @@ SortedFileCount = Dict[Filetype, List[PeriodCount]]
 
 
 def all_filetype_counts(periodic_stats: SortedFileCount) -> SortedFileCount:
+    """
+    Aggregates a SortedFileCount from all file types to a single file type named 'all', to calculate a complete count
+    over all file types. This helps in establishing a view on the overall deposited data in a digital archive.
+
+    :param periodic_stats: A SortedFileCount with counts per period, per file type
+
+    :return: A SortedFileCount with all counts per period combined into a single "virtual" file type named 'all'.
+    """
     periodic_combined: SortedFileCount = {'all': []}
     for filetype, period_counts in periodic_stats.items():
         for period_count in period_counts:
