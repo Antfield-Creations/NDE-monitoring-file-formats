@@ -37,7 +37,7 @@ def all_filetype_counts(periodic_stats: SortedFileCount) -> SortedFileCount:
     :return: A SortedFileCount with all counts per period combined into a single "virtual" file type named 'all'.
     """
     periodic_combined: SortedFileCount = {'all': []}
-    for filetype, period_counts in periodic_stats.items():
+    for period_counts in periodic_stats.values():
         for period_count in period_counts:
             already_periods = {count['period']: idx for idx, count in enumerate(periodic_combined['all'])}
 
