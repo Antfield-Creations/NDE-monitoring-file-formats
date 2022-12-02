@@ -230,44 +230,53 @@ def plot_counts(counts: SortedFileCount, cfg: dict) -> None:
     output_dir = cfg['img_output_dir']
     num_tests = cfg['num_test_measurements']
 
-    for file_type, quarter_counts in counts.items():
-        quarters = [entry['period'] for entry in quarter_counts]
+    for filetype, period_counts in counts.items():
+        periods = [entry['period'] for entry in period_counts]
 
-        # Set up training and test data
-        all_times = list(range(len(quarters)))
-        train_times = all_times[:-num_tests]
-        test_times = all_times[-num_tests:]
+        all_times = list(range(len(periods)))
+        all_counts = [entry['count'] for entry in period_counts]
 
-        all_counts = [entry['count'] for entry in quarter_counts]
         train_counts = all_counts[:-num_tests]
-        # test_counts = all_counts[-num_tests:]
-
-        # Fit the Bass model and produce data
-        bass_model = BassDiffusionModel()
-        train_inputs = np.array(train_times)
-        test_inputs = np.array(test_times)
-
-        try:
-            bass_model.fit(train_inputs, np.array(train_counts))
-        except RuntimeError as e:
-            logging.error(f'Unable to fit Bass model based on train inputs {train_counts}: {e}')
-            continue
-
-        fitted_values = bass_model.sales_at_time(bass_model.bass_parameters, train_inputs)
-        projected_values = bass_model.sales_at_time(bass_model.bass_parameters, test_inputs)
 
         plot_data = [
             all_times, all_counts,
-            train_times, fitted_values,
-            test_times, projected_values
         ]
         legend_data = [
             'Aantal bestanden',
-            'Bass "fit"',
-            'Bass "test"'
         ]
 
-        if file_type in cfg['linear_plots']:
+        if not filetype.endswith('cumulative'):
+            # Set up training and test data
+            train_times = all_times[:-num_tests]
+            test_times = all_times[-num_tests:]
+
+            # test_counts = all_counts[-num_tests:]
+
+            # Fit the Bass model and produce data
+            bass_model = BassDiffusionModel()
+            train_inputs = np.array(train_times)
+            test_inputs = np.array(test_times)
+
+            try:
+                bass_model.fit(train_inputs, np.array(train_counts))
+            except RuntimeError as e:
+                logging.error(f'Unable to fit Bass model based on train inputs {train_counts}: {e}')
+                continue
+
+            fitted_values = bass_model.sales_at_time(bass_model.bass_parameters, train_inputs)
+            projected_values = bass_model.sales_at_time(bass_model.bass_parameters, test_inputs)
+
+            plot_data.extend([
+                # Type-force the values to list to ensure compatibility with plot_data
+                train_times, np.array(fitted_values).tolist(),
+                test_times, np.array(projected_values).tolist(),
+                ])
+            legend_data.extend([
+                'Bass "fit"',
+                'Bass "test"'
+            ])
+
+        if filetype in cfg['linear_plots']:
             # Fit linear model for selected file formats
             linear_model = LinearRegression()
             max_idx = train_counts.index(max(train_counts))
@@ -285,10 +294,10 @@ def plot_counts(counts: SortedFileCount, cfg: dict) -> None:
             legend_data.append('Lineair "test"')
 
         plt.plot(*plot_data)
-        x_axis_labels = extract_year_ticks(quarters, separator='Q', index=0)
-        plt.title(f"Tellingen per periode voor bestandstype {file_type}")
+        x_axis_labels = extract_year_ticks(periods, separator='Q', index=0)
+        plt.title(f"Tellingen per periode voor bestandstype {filetype}")
         plt.xticks(all_times, x_axis_labels, rotation=45)
         plt.legend(legend_data)
         os.makedirs(output_dir, exist_ok=True)
-        plt.savefig(os.path.join(output_dir, f'{quote_plus(file_type)}.png'))
+        plt.savefig(os.path.join(output_dir, f'{quote_plus(filetype)}.png'))
         plt.show()
