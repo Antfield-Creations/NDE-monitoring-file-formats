@@ -245,36 +245,41 @@ def plot_counts(counts: SortedFileCount, cfg: dict) -> None:
             'Aantal bestanden',
         ]
 
-        if not filetype.endswith('cumulative'):
-            # Set up training and test data
-            train_times = all_times[:-num_tests]
-            test_times = all_times[-num_tests:]
+        # Set up training and test data
+        train_times = all_times[:-num_tests]
+        test_times = all_times[-num_tests:]
 
-            # test_counts = all_counts[-num_tests:]
+        train_inputs = np.array(train_times)
+        test_inputs = np.array(test_times)
 
-            # Fit the Bass model and produce data
-            bass_model = BassDiffusionModel()
-            train_inputs = np.array(train_times)
-            test_inputs = np.array(test_times)
+        bass_model = BassDiffusionModel()
 
-            try:
-                bass_model.fit(train_inputs, np.array(train_counts))
-            except RuntimeError as e:
-                logging.error(f'Unable to fit Bass model based on train inputs {train_counts}: {e}')
-                continue
+        if filetype.endswith('cumulatief'):
+            train_counts.insert(0, 0)
+            train_counts = np.diff(train_counts)
+            predict = bass_model.predict_cumulative
+        else:
+            predict = bass_model.predict
 
-            fitted_values = bass_model.sales_at_time(bass_model.bass_parameters, train_inputs)
-            projected_values = bass_model.sales_at_time(bass_model.bass_parameters, test_inputs)
+        # Fit the Bass model and produce data
+        try:
+            bass_model.fit(train_inputs, np.array(train_counts))
+        except RuntimeError as e:
+            logging.error(f'Unable to fit Bass model based on train inputs {train_counts}: {e}')
+            continue
 
-            plot_data.extend([
-                # Type-force the values to list to ensure compatibility with plot_data
-                train_times, np.array(fitted_values).tolist(),
-                test_times, np.array(projected_values).tolist(),
-                ])
-            legend_data.extend([
-                'Bass "fit"',
-                'Bass "test"'
+        fitted_values = predict(train_inputs)
+        projected_values = predict(test_inputs)
+
+        plot_data.extend([
+            # Type-force the values to list to ensure compatibility with plot_data
+            train_times, np.array(fitted_values).tolist(),
+            test_times, np.array(projected_values).tolist(),
             ])
+        legend_data.extend([
+            'Bass "fit"',
+            'Bass "test"'
+        ])
 
         if filetype in cfg['linear_plots']:
             # Fit linear model for selected file formats
@@ -298,6 +303,7 @@ def plot_counts(counts: SortedFileCount, cfg: dict) -> None:
         plt.title(f"Tellingen per periode voor bestandstype {filetype}")
         plt.xticks(all_times, x_axis_labels, rotation=45)
         plt.legend(legend_data)
+
         os.makedirs(output_dir, exist_ok=True)
         plt.savefig(os.path.join(output_dir, f'{quote_plus(filetype)}.png'))
         plt.show()
