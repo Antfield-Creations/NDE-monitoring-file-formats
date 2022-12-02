@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 from analysis.config import Config, load_config
 from analysis.shared_parsers import PeriodicFiletypeCount, plot_counts, to_sorted_yearly, SortedFileCount, \
-    all_filetype_counts, extract_year_ticks
+    all_filetype_counts, extract_year_ticks, add_cumulative_counts
 
 
 def main(config: Config) -> int:
@@ -34,7 +34,6 @@ def main(config: Config) -> int:
 
     # Aggregate to counts per year
     yearly_stats = to_sorted_yearly(monthly_stats)
-
     # Aggregate to periodic counts for all file types combined
     all_filetypes_yearly_counts = all_filetype_counts(yearly_stats)
     all_counts = [period_count['count'] for period_count in all_filetypes_yearly_counts['all']]
@@ -55,6 +54,12 @@ def main(config: Config) -> int:
 
     # Keep only file types with more than the configured number of measurements and which are part of the selection
     keep_filetypes = filter_stats(yearly_stats, dans_cfg)
+
+    # Add a cumulative count for specified types
+    for filetype in dans_cfg['mime_plots']:
+        if filetype.endswith(' cumulative'):
+            yearly_stats = add_cumulative_counts(yearly_stats, filetype.rstrip(' cumulative'))
+            keep_filetypes.append(filetype)
 
     logging.info(f'Keeping {len(keep_filetypes)} filetypes for analysis: {keep_filetypes}')
     kept_counts = {filetype: counts for filetype, counts in yearly_stats.items() if filetype in keep_filetypes}
