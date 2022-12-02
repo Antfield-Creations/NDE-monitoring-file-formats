@@ -218,10 +218,10 @@ def add_cumulative_counts(counts: SortedFileCount, format: str) -> SortedFileCou
     abs_counts = [period_count['count'] for period_count in counts[format]]
     periods = [period_count['period'] for period_count in counts[format]]
     cum_counts = np.cumsum(abs_counts)
-    counts[f'{format} cumulative'] = []
+    counts[f'{format} cumulatief'] = []
 
     for period, cum_count in zip(periods, cum_counts):
-        counts[f'{format} cumulative'].append({'period': period, 'count': cum_count})
+        counts[f'{format} cumulatief'].append({'period': period, 'count': cum_count})
 
     return counts
 
