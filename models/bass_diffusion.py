@@ -113,6 +113,11 @@ class BassDiffusionModel:
         self.bass_parameters.p = optimal[1]
         self.bass_parameters.q = optimal[2]
 
+    def predict_cumulative(self, tp: np.ndarray) -> np.ndarray:
+        return self.bass_parameters.m * (
+            1 - self.cofactor(self.bass_parameters, tp)
+        ) / (1 + (self.bass_parameters.q / self.bass_parameters.p) * self.cofactor(self.bass_parameters, tp))
+
     def plot_sales_pdf(self, times: np.ndarray, interpolated_times: np.ndarray, expected_sales: np.ndarray) -> None:
         projected_sales = self.sales_at_time(self.bass_parameters, interpolated_times)
 
@@ -121,23 +126,11 @@ class BassDiffusionModel:
         plt.legend(['Fit', 'True'])
         plt.show()
 
-    def plot_sales_cdf(self) -> None:
-        # time interpolation
-        t = np.linspace(1.0, 10.0, num=10)
-
-        # expected_sales vector
-        sales = np.array([840, 1470, 2110, 4000, 7590, 10950, 10530, 9470, 7790, 5890])
-
-        # time intervals
-        tp = np.linspace(1.0, 100.0, num=100) / 10
-
-        # Cumulative expected_sales (cdf)
-        cumulative_sales = np.cumsum(sales)
-        sales_cdf = self.bass_parameters.m * (
-            1 - self.cofactor(self.bass_parameters, tp)
-        ) / (1 + (self.bass_parameters.q / self.bass_parameters.p) * self.cofactor(self.bass_parameters, tp))
-
-        plt.plot(tp, sales_cdf, t, cumulative_sales)
+    def plot_sales_cdf(self, sales: np.ndarray, time_series: np.ndarray, projected_times: np.ndarray) -> None:
+        plt.plot(
+            projected_times, self.predict_cumulative(np.cumsum(sales)),
+            time_series, np.cumsum(sales),
+        )
         plt.title('Sales cdf')
         plt.legend(['Fit', 'True'])
         plt.show()
