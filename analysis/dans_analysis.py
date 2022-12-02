@@ -46,7 +46,7 @@ def main(config: Config) -> int:
     # Generate plot for all file types combined
     plt.plot(list(range(len(all_counts))), all_counts)
     x_axis_labels = extract_year_ticks(all_periods, separator=' ', index=0)
-    plt.title("Tellingen per periode voor alle bestandstypen gecombineerd")
+    plt.title('Tellingen per periode voor alle bestandstypen gecombineerd')
     plt.xticks(list(range(len(all_counts))), x_axis_labels, rotation=45)
     plt.legend(['Aantal bestanden'])
     output_dir = dans_cfg['img_output_dir']
