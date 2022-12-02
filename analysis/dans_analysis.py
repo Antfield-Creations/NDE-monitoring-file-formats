@@ -60,8 +60,9 @@ def main(config: Config) -> int:
 
     # Add a cumulative count for specified types
     for filetype in dans_cfg['mime_plots']:
-        if filetype.endswith(' cumulative'):
-            yearly_stats = add_cumulative_counts(yearly_stats, filetype.rstrip(' cumulative'))
+        if filetype.endswith(' cumulatief'):
+            original_type = filetype.replace(' cumulatief', '')
+            yearly_stats = add_cumulative_counts(yearly_stats, original_type)
             keep_filetypes.append(filetype)
 
     logging.info(f'Keeping {len(keep_filetypes)} filetypes for analysis: {keep_filetypes}')
