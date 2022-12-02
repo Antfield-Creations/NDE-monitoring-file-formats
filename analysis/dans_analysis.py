@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import os
@@ -13,6 +14,8 @@ from analysis.shared_parsers import PeriodicFiletypeCount, plot_counts, to_sorte
 
 
 def main(config: Config) -> int:
+    start = datetime.datetime.now()
+
     dans_cfg = config['data']['dans']
 
     with open(dans_cfg['filetype_monthly_aggregate_path'], 'rt') as f:
@@ -64,6 +67,9 @@ def main(config: Config) -> int:
     logging.info(f'Keeping {len(keep_filetypes)} filetypes for analysis: {keep_filetypes}')
     kept_counts = {filetype: counts for filetype, counts in yearly_stats.items() if filetype in keep_filetypes}
     plot_counts(kept_counts, dans_cfg)
+
+    end = datetime.datetime.now()
+    logging.info(f'Script took {end - start}')
 
     return 0
 
