@@ -35,7 +35,7 @@ spec:
       mime_plots:
         - .jpg
         - .tif
-        - .tif cumulative
+        - .tif cumulatief
         - .pdf
         - .xml
         - .xlsx
