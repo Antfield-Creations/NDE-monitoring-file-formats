@@ -203,6 +203,29 @@ def to_sorted_yearly(filetype_monthly_counts: PeriodicFiletypeCount) -> SortedFi
     return year_counts
 
 
+def add_cumulative_counts(counts: SortedFileCount, format: str) -> SortedFileCount:
+    """
+    Produces a cumulative count for specified `format`, under the key '{`format`} cumulative'
+
+    :param counts:  A dictionary of file formats with each a list of period-sorted counts
+    :param format:  The format to produce cumulative counts for
+
+    :return: The same SortedFileCount with an added "{format} cumulative" key with cumulative counts
+    """
+    if format not in counts:
+        raise KeyError(f'Given key {format} not found in {counts.keys()}')
+
+    abs_counts = [period_count['count'] for period_count in counts[format]]
+    periods = [period_count['period'] for period_count in counts[format]]
+    cum_counts = np.cumsum(abs_counts)
+    counts[f'{format} cumulative'] = []
+
+    for period, cum_count in zip(periods, cum_counts):
+        counts[f'{format} cumulative'].append({'period': period, 'count': cum_count})
+
+    return counts
+
+
 def plot_counts(counts: SortedFileCount, cfg: dict) -> None:
     output_dir = cfg['img_output_dir']
     num_tests = cfg['num_test_measurements']
