@@ -34,6 +34,7 @@ spec:
       num_test_measurements: 2
       mime_plots:
         - .jpg
+        - .jpg cumulatief
         - .tif
         - .tif cumulatief
         - .pdf
