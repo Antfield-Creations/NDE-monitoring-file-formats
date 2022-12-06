@@ -46,7 +46,7 @@ def main(config: Config) -> int:
 
 def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> SortedFileCount:
     quarterly_counts: SortedFileCount = {}
-    
+
     # hack for the KB data
     current_year = int(2014)
 
@@ -69,11 +69,11 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
             if year > current_year:
                 logging.warning(f'Expected year entry not to be in the future, got {year}, skipping')
                 continue
-            
+
             month = int(year_month.split('-')[1])
             quarter = math.ceil(month / 3)
             this_quarter = f'{year}Q{quarter}'
-            
+
             type_counts = quarterly_counts[file_type]
             print(type_counts)
             # Initialize a first count for the file type if it's empty
@@ -95,13 +95,13 @@ def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> Sorte
                 type_counts[-1]['count'] += count
 
         # hack for the KB data
-        #quarter = math.ceil(datetime.datetime.now().month / 3)
-        #current_quarter = f'{datetime.datetime.now().year}Q{quarter}'
+        # quarter = math.ceil(datetime.datetime.now().month / 3)
+        # current_quarter = f'{datetime.datetime.now().year}Q{quarter}'
         month_now = int(12)
         year_now = int(2014)
         quarter = math.ceil(month_now / 3)
         current_quarter = f'{year_now}Q{quarter}'
-        
+
         while quarterly_counts[file_type][-1]['period'] != current_quarter:
             last_measured = quarterly_counts[file_type][-1]['period']
             next_year, next_quarter = next_year_quarter(last_measured)

@@ -7,6 +7,7 @@ import datetime
 import json
 import logging
 from argparse import ArgumentParser
+from os.path import splitext
 from typing import Dict
 
 from jsonpath_ng.ext import parse
@@ -72,11 +73,9 @@ def main(config: Config) -> int:
 def explain_valid_dataset(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
     """
     Analyses a metadata record from the archaeology datastation REST API to validate it for usage in this analysis
-    It accepts datasets with:
-      - Two versions, one version migrated from DANS EASY and one with preferred file formats
-        example: https://archaeology.datastations.nl/dataset.xhtml?persistentId=doi:10.17026/dans-zbe-b8h5
 
     :param ds_metadata: Dictionary with keys and values from the Dataverse version API
+    :param dans_cfg: Simple key-value settings, found under config.yaml data -> dans
 
     :return: True if the dataset is valid, False if not
     """
@@ -109,7 +108,7 @@ def explain_valid_dataset(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
     return 'Valid'
 
 
-def extract_content_type_counts(ds_metadata: dict, dans_cfg: Dict[str, str]) -> Dict[str, int]:
+def extract_content_type_counts(ds_metadata: dict, dans_cfg: dict) -> Dict[str, int]:
     """
     Collects the filenames of the first version of the dataset.
 
@@ -129,9 +128,11 @@ def extract_content_type_counts(ds_metadata: dict, dans_cfg: Dict[str, str]) -> 
         if file['label'] in dans_cfg['file_skip_list']:
             continue
 
-        content_type = file['dataFile']['contentType']
-        content_types.setdefault(content_type, 0)
-        content_types[content_type] += 1
+        filetype = splitext(file['label'])[1].lower()
+        if filetype in dans_cfg['filetype_mapping'].keys():
+            filetype = dans_cfg['filetype_mapping'][filetype]
+        content_types.setdefault(filetype, 0)
+        content_types[filetype] += 1
 
     return content_types
 

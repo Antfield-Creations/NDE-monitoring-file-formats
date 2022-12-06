@@ -4,6 +4,7 @@ spec:
 
   data:
     dans:
+      # Scrape settings
       root_url: https://archaeology.datastations.nl
       page_subpath: /dataverse/root?q=&types=dataverses%3Adatasets&sort=dateSort&order=desc&page={page}
       start_page: 1
@@ -18,6 +19,38 @@ spec:
         - emd.xml
         - files.xml
         - provenance.xml
+
+      # Aggregation settings
+      filetype_mapping:
+        .tiff: .tif
+        .jpeg: .jpg
+
+      # Analysis settings
+      minimum_time_periods: 8
+      min_year: 1997
+      # The number of last periods to measure if there was a decline
+      decline_periods: 2
+      img_output_dir: images/dans/
+      num_test_measurements: 2
+      mime_plots:
+        - .jpg
+        - .tif
+        - .tif cumulatief
+        - .pdf
+        - .xml
+        - .xlsx
+        - .xls
+        - .tab
+        - .shp
+        - .geojson
+        - .mdb
+        - .accdb
+      linear_plots:
+        - application/pdf
+        - text/tsv
+        - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        - application/shp
+        - application/x-msaccess
 
     nibg:
       raw_csv_path: ~/data/NDE/digital_files.csv
