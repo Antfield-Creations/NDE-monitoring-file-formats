@@ -38,6 +38,8 @@ spec:
         - .tif
         - .tif cumulatief
         - .pdf
+        - .doc
+        - .docx
         - .xml
         - .xlsx
         - .xls
