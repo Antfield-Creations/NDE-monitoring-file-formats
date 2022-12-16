@@ -28,6 +28,7 @@ spec:
       # Analysis settings
       minimum_time_periods: 8
       min_year: 1997
+      max_year: 2019
       # The number of last periods to measure if there was a decline
       decline_periods: 2
       img_output_dir: images/dans/
@@ -48,12 +49,7 @@ spec:
         - .geojson
         - .mdb
         - .accdb
-      linear_plots:
-        - application/pdf
-        - text/tsv
-        - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-        - application/shp
-        - application/x-msaccess
+      linear_plots: []
 
     nibg:
       raw_csv_path: ~/data/NDE/digital_files.csv

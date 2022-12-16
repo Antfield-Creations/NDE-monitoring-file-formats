@@ -197,7 +197,7 @@ def to_sorted_yearly(filetype_monthly_counts: PeriodicFiletypeCount) -> SortedFi
                 'period': str(int(last_period) + 1), 'count': 0
             })
 
-        # Chop off the current quarter: counts may still be incomplete
+        # Chop off the last count: counts may still be incomplete for the last period
         year_counts[file_type].pop(-1)
 
     return year_counts

@@ -41,9 +41,12 @@ def main(config: Config) -> int:
     all_filetypes_yearly_counts = all_filetype_counts(yearly_stats)
     all_counts = [period_count['count'] for period_count in all_filetypes_yearly_counts['all']]
     all_periods = [period_count['period'] for period_count in all_filetypes_yearly_counts['all']]
+
+    # Filter periods to specified range
     first_valid_idx = all_periods.index(str(dans_cfg['min_year']))
-    all_counts = all_counts[first_valid_idx:]
-    all_periods = all_periods[first_valid_idx:]
+    last_valid_idx = all_periods.index(str(dans_cfg['max_year']))
+    all_counts = all_counts[first_valid_idx:last_valid_idx]
+    all_periods = all_periods[first_valid_idx:last_valid_idx]
 
     # Generate plot for all file types combined
     plt.plot(list(range(len(all_counts))), all_counts)
@@ -105,7 +108,7 @@ def filter_stats(yearly_stats: SortedFileCount, dans_cfg: dict) -> List[str]:
         count_idx = 0
         while count_idx < len(yearly_counts):
             year = int(yearly_counts[count_idx]['period'][:5])
-            if year < dans_cfg['min_year']:
+            if year < dans_cfg['min_year'] or year > dans_cfg['max_year']:
                 yearly_counts.pop(count_idx)
             else:
                 count_idx += 1
