@@ -8,6 +8,7 @@ def get(url: str, conn: HTTPSConnection) -> str:
     """
     Simple helper function to get the text as utf-8 from a url
     :param url: The resource to get the text from
+    :param conn: An initialized http.client.HTTPSConnection, as `conn = HTTPSConnection("example.com")`
 
     :return: The response text, parsed as UTF-8
     """
