@@ -44,13 +44,13 @@ def main(config: Config) -> int:
     return 0
 
 
-def to_sorted_quarterly(file_type_montly_counts: PeriodicFiletypeCount) -> SortedFileCount:
+def to_sorted_quarterly(file_type_monthly_counts: PeriodicFiletypeCount) -> SortedFileCount:
     quarterly_counts: SortedFileCount = {}
 
     # hack for the KB data
     current_year = int(2014)
 
-    for file_type, monthly_counts in file_type_montly_counts.items():
+    for file_type, monthly_counts in file_type_monthly_counts.items():
         quarterly_counts.setdefault(file_type, [])
 
         time_sorted = list(monthly_counts.items())
