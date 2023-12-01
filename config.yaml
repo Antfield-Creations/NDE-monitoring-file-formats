@@ -67,10 +67,10 @@ spec:
         - mp3
         
     kb:
-      raw_csv_path: data/kbData.csv
+      raw_csv_path: data/kb/kbData.csv
       raw_csv_line_count: 5048327
       minimum_time_periods: 10
-      json_output_dir: data/
+      json_output_dir: data/kb/
       img_output_dir: images/kb/
       num_test_measurements: 4
       linear_plots:
@@ -114,6 +114,6 @@ spec:
         - application/xhtml+xml
         - image/gif
         - application/x-mobipocket-ebook
-      csv_output_dir: data/
+      csv_output_dir: data/common-crawl/
 
   models: []
