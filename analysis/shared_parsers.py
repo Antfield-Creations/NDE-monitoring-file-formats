@@ -316,3 +316,4 @@ def plot_counts(counts: SortedFileCount, cfg: CommentedMap) -> None:
         os.makedirs(output_dir, exist_ok=True)
         plt.savefig(os.path.join(output_dir, f'{quote_plus(filetype)}.png'))
         plt.show()
+        plt.close()
