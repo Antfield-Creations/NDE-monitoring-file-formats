@@ -236,6 +236,7 @@ def plot_counts(counts: SortedFileCount, cfg: CommentedMap) -> None:
 
     :return: None
     """
+    # Extract out a few long variables for readability
     output_dir = cfg['img_output_dir']
     num_tests = cfg['num_test_measurements']
 
@@ -247,9 +248,12 @@ def plot_counts(counts: SortedFileCount, cfg: CommentedMap) -> None:
 
         train_counts = all_counts[:-num_tests]
 
+        # Plot data is added as pairs: the interval or time period on the x-axis, and the counts as values on the y-axis
         plot_data = [
             all_times, all_counts,
         ]
+        # The legend data corresponds with each added "pair" of x/y values in the list, so we should get a `legend_data`
+        # list of twice the length of the `plot_data`
         legend_data = [
             'Aantal bestanden',
         ]
@@ -270,16 +274,18 @@ def plot_counts(counts: SortedFileCount, cfg: CommentedMap) -> None:
         else:
             predict = bass_model.predict
 
-        # Fit the Bass model and produce data
+        # Fit the Bass model to the training data
         try:
             bass_model.fit(train_inputs, np.array(train_counts))
         except RuntimeError as e:
             logging.error(f'Unable to fit Bass model based on train inputs {train_counts}: {e}')
             continue
 
+        # Produce training and test data outputs
         fitted_values = predict(train_inputs)
         projected_values = predict(test_inputs)
 
+        # Add the Bass model data to the plot data and legend data
         plot_data.extend([
             # Type-force the values to list to ensure compatibility with plot_data
             train_times, np.array(fitted_values).tolist(),
@@ -290,8 +296,8 @@ def plot_counts(counts: SortedFileCount, cfg: CommentedMap) -> None:
             'Bass "test"'
         ])
 
+        # Fit linear model for the file formats only if the configuration explicitly says so
         if filetype in cfg['linear_plots']:
-            # Fit linear model for selected file formats
             linear_model = LinearRegression()
             max_idx = train_counts.index(max(train_counts))
             linear_train_times = np.expand_dims(all_times[max_idx:-num_tests], 1)
