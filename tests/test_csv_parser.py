@@ -8,5 +8,5 @@ sample = [
 
 def test_parse_csv() -> None:
     parsed = parse_csv(sample)
-    assert type(parsed[0]['urls']) == int
-    assert type(parsed[0]['pct_pages_per_crawl']) == float
+    assert isinstance(parsed[0]['urls'], int)
+    assert isinstance(parsed[0]['pct_pages_per_crawl'],  float)

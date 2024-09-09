@@ -164,7 +164,7 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
         # Project Bass model "sales"
         bass_fitted_values = bass_model.sales_at_time(bass_model.bass_parameters, bass_train_times)
         bass_projected_ndarray = bass_model.sales_at_time(bass_model.bass_parameters, bass_test_times)
-        assert type(bass_projected_ndarray) == np.ndarray
+        assert isinstance(bass_projected_ndarray, np.ndarray)
         bass_projected_values = bass_projected_ndarray.tolist()
 
         # Constrain the linear model to only the values from the highest value onwards
@@ -180,8 +180,8 @@ def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: 
 
         # Calculate accuracy in average error
         actual_test_values = list(usage_per_crawl[test_crawls_idx:])
-        assert type(actual_test_values) == list
-        assert type(bass_projected_values) == list
+        assert isinstance(actual_test_values,  list)
+        assert isinstance(bass_projected_values, list)
 
         bass_error = [abs(actual - predicted) for actual, predicted
                       in zip(actual_test_values, bass_projected_values)]
