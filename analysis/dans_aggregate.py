@@ -11,15 +11,16 @@ from os.path import splitext
 from typing import Dict
 
 from jsonpath_ng.ext import parse
+from ruamel.yaml import CommentedMap
 from tqdm import tqdm
 
-from analysis.config import load_config, Config
+from analysis.config import load_config
 
 # Unordered key/val
 FileTimeStats = Dict[str, Dict[str, int]]
 
 
-def main(config: Config) -> int:
+def main(config: CommentedMap) -> int:
     """
     Iterates over all pages in the datasets index of the Archaeology Datastation (~120k results in ~12k pages)
 
@@ -70,7 +71,10 @@ def main(config: Config) -> int:
     return 0
 
 
-def explain_valid_dataset(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
+def explain_valid_dataset(
+        ds_metadata: dict,  # type: ignore[type-arg]
+        dans_cfg: Dict[str, str]
+) -> str:
     """
     Analyses a metadata record from the archaeology datastation REST API to validate it for usage in this analysis
 
@@ -108,7 +112,10 @@ def explain_valid_dataset(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
     return 'Valid'
 
 
-def extract_content_type_counts(ds_metadata: dict, dans_cfg: dict) -> Dict[str, int]:
+def extract_content_type_counts(
+        ds_metadata: dict,  # type: ignore[type-arg]
+        dans_cfg: CommentedMap
+) -> Dict[str, int]:
     """
     Collects the filenames of the first version of the dataset.
 
@@ -137,7 +144,10 @@ def extract_content_type_counts(ds_metadata: dict, dans_cfg: dict) -> Dict[str, 
     return content_types
 
 
-def extract_year_month(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
+def extract_year_month(
+        ds_metadata: dict,  # type: ignore[type-arg]
+        dans_cfg: dict[str, str]
+) -> str:
     """
     Collects the correct date for the first version files
     It aggregates the file metadata into a counter per file type, per month
@@ -155,7 +165,7 @@ def extract_year_month(ds_metadata: dict, dans_cfg: Dict[str, str]) -> str:
 
     queried_date = matches[0].value
 
-    return queried_date[:7]
+    return str(queried_date[:7])
 
 
 if __name__ == '__main__':

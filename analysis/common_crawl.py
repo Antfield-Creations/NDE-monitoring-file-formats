@@ -12,9 +12,10 @@ from urllib.request import urlopen
 import numpy as np
 from matplotlib import pyplot as plt
 from numpy.lib.stride_tricks import sliding_window_view
+from ruamel.yaml import CommentedMap
 from sklearn.linear_model import LinearRegression
 
-from analysis.config import load_config, Config
+from analysis.config import load_config
 from analysis.shared_parsers import extract_year_ticks
 from models.bass_diffusion import BassDiffusionModel
 
@@ -30,7 +31,7 @@ MimeDict = Dict[MimeType, List[MimeStats]]
 ModelStats = List[Dict[str, Union[str, float]]]
 
 
-def main(config: Config) -> int:
+def main(config: CommentedMap) -> int:
     start = datetime.datetime.now()
 
     crawl_cfg = config['data']['common_crawl']
@@ -82,7 +83,7 @@ def parse_csv(stats: List[Dict[str, str]]) -> StatsDictTable:
     return stats_dict
 
 
-def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
+def filter_declining(typed_stats: StatsDictTable) -> dict[str, list[dict[str, int]]]:
     """
     Filters the list of statistics for MIME types that decline over the last year
 
@@ -90,7 +91,7 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
 
     :return: a dictionary of mime types with declining counts, with usage
     """
-    declining_mime_types: dict = {}
+    declining_mime_types: dict[str, list[dict[str, int]]] = {}
 
     # First: "de-normalize" the table into a nested dictionary of mime types with page counts per crawl
     # This is easier to handle: we want to analyse statistics per mime type, over the years
@@ -107,7 +108,7 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
         )
 
     mime_types = list(declining_mime_types.keys())
-    mime_declines = []
+    mime_declines: list[dict[str, str | int]] = []
 
     for mime_type in mime_types:
         crawl_stats = declining_mime_types[mime_type]
@@ -138,7 +139,7 @@ def filter_declining(typed_stats: StatsDictTable) -> MimeDict:
     return declining_mime_types
 
 
-def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: Config) -> ModelStats:
+def analyse(stats: MimeDict, collection_metadata: List[Dict[str, str]], config: CommentedMap) -> ModelStats:
     error_stats: ModelStats = []
     # Extract out shorthand for long dict value
     cc_cfg = config['data']['common_crawl']

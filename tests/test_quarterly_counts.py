@@ -2,7 +2,7 @@ import json
 import os
 
 from analysis.config import load_config
-from analysis.nibg_analysis import to_pruned_sorted_quarterly
+from analysis.shared_parsers import to_pruned_sorted_quarterly
 
 
 def test_quarterly_counts() -> None:

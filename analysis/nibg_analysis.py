@@ -4,11 +4,13 @@ import logging
 import os
 from argparse import ArgumentParser
 
-from analysis.config import load_config, Config
+from ruamel.yaml import CommentedMap
+
+from analysis.config import load_config
 from analysis.shared_parsers import to_pruned_sorted_quarterly, plot_counts
 
 
-def main(config: Config) -> int:
+def main(config: CommentedMap) -> int:
     start = datetime.datetime.now()
     nibg_cfg = config['data']['nibg']
 

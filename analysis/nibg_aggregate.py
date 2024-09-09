@@ -7,18 +7,18 @@ import json
 import logging
 import os.path
 from argparse import ArgumentParser
-from typing import List
 
+from ruamel.yaml import CommentedMap
 from tqdm import tqdm
 
-from analysis.config import load_config, Config
+from analysis.config import load_config
 
 
-def main(config: Config) -> int:
+def main(config: CommentedMap) -> int:
     start = datetime.datetime.now()
 
     nibg_cfg = config['data']['nibg']
-    file_temp_stats: dict = {}
+    file_temp_stats: dict[str, dict[str, int]] = {}
     skipped_records = 0
 
     with open(nibg_cfg['raw_csv_path'], 'rt') as f:
@@ -54,7 +54,7 @@ def main(config: Config) -> int:
 
     # Prune stats for formats that have at least 10 entries
     formats = list(file_temp_stats.keys())
-    dropped_formats: List[str] = []
+    dropped_formats: list[str] = []
     min_measurements = nibg_cfg['minimum_time_periods']
 
     for extension in formats:

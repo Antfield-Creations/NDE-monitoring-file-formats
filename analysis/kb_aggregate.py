@@ -9,16 +9,17 @@ import os.path
 from argparse import ArgumentParser
 from typing import List
 
+from ruamel.yaml import CommentedMap
 from tqdm import tqdm
 
-from analysis.config import load_config, Config
+from analysis.config import load_config
 
 
-def main(config: Config) -> int:
+def main(config: CommentedMap) -> int:
     start = datetime.datetime.now()
 
     kb_cfg = config['data']['kb']
-    file_temp_stats: dict = {}
+    file_temp_stats: dict[str, dict[str, int]] = {}
     skipped_records = 0
 
     with open(kb_cfg['raw_csv_path'], 'rt') as f:

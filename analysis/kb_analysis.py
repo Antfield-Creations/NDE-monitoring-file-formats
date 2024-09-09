@@ -8,7 +8,9 @@ import re
 from argparse import ArgumentParser
 from typing import Dict, List, TypedDict
 
-from analysis.config import load_config, Config
+from ruamel.yaml import CommentedMap
+
+from analysis.config import load_config
 from analysis.shared_parsers import next_year_quarter, plot_counts
 
 Filetype = str
@@ -23,7 +25,7 @@ class PeriodCount(TypedDict):
 SortedFileCount = Dict[Filetype, List[PeriodCount]]
 
 
-def main(config: Config) -> int:
+def main(config: CommentedMap) -> int:
     start = datetime.datetime.now()
     kb_cfg = config['data']['kb']
 

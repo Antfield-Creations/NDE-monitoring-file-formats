@@ -1,4 +1,4 @@
-from analysis.common_crawl import extract_year_ticks
+from analysis.shared_parsers import extract_year_ticks
 
 
 def test_year_ticks() -> None:

@@ -5,10 +5,7 @@ from io import StringIO
 from os.path import expanduser
 from typing import Optional
 
-from ruamel.yaml import YAML
-
-# Type alias for config type
-Config = dict
+from ruamel.yaml import YAML, CommentedMap
 
 
 # Configure logging
@@ -18,7 +15,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 def load_config(
         path: str = 'config.yaml',
         run_id: Optional[str] = None,
-        artifact_folder: Optional[str] = None) -> Config:
+        artifact_folder: Optional[str] = None) -> CommentedMap:
     """
     Loads 'config.yaml' from the current working directory, or somewhere else if specified
 

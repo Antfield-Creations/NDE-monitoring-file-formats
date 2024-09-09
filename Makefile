@@ -5,4 +5,4 @@ tests:
 
 check:
 	pipenv run flake8 .
-	pipenv run mypy .
+	pipenv run mypy . --strict

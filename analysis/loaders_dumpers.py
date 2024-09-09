@@ -3,7 +3,7 @@ from http.client import HTTPSConnection
 from retry import retry
 
 
-@retry(tries=3, delay=1, backoff=2)
+@retry(tries=3, delay=1, backoff=2)  # type: ignore[misc]
 def get(url: str, conn: HTTPSConnection) -> str:
     """
     Simple helper function to get the text as utf-8 from a url

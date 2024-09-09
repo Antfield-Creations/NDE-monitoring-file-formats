@@ -7,13 +7,14 @@ from typing import List, Tuple
 
 import numpy as np
 from matplotlib import pyplot as plt
+from ruamel.yaml import CommentedMap
 
-from analysis.config import Config, load_config
+from analysis.config import load_config
 from analysis.shared_parsers import PeriodicFiletypeCount, plot_counts, to_sorted_yearly, SortedFileCount, \
     all_filetype_counts, extract_year_ticks, add_cumulative_counts
 
 
-def main(config: Config) -> int:
+def main(config: CommentedMap) -> int:
     start = datetime.datetime.now()
 
     dans_cfg = config['data']['dans']
@@ -78,7 +79,7 @@ def main(config: Config) -> int:
     return 0
 
 
-def filter_stats(yearly_stats: SortedFileCount, dans_cfg: dict) -> List[str]:
+def filter_stats(yearly_stats: SortedFileCount, dans_cfg: CommentedMap) -> List[str]:
     keep_filetypes: List[str] = []
     for filetype, yearly_counts in yearly_stats.items():
         # We do the exercise below because the mime types included in the "mime_plots" list was decided based on the

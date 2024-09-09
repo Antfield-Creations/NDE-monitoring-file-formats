@@ -26,13 +26,14 @@ from math import ceil
 from typing import List, Dict, Optional
 
 from bs4 import BeautifulSoup
+from ruamel.yaml import CommentedMap
 from tqdm import tqdm
 
-from analysis.config import Config, load_config
+from analysis.config import load_config
 from analysis.loaders_dumpers import get
 
 
-def main(config: Config) -> int:
+def main(config: CommentedMap) -> int:
     """
     Iterates over all pages in the datasets index of the Archaeology Datastation (~120k results in ~12k pages)
 
@@ -89,7 +90,7 @@ def main(config: Config) -> int:
     return 0
 
 
-def dois_from_results(page_num: int, conn: HTTPSConnection, dans_cfg: dict) -> List[str]:
+def dois_from_results(page_num: int, conn: HTTPSConnection, dans_cfg: CommentedMap) -> List[str]:
     """
     Processes a specific results page indicated by `page_num` from the main Archaeology Datastation datasets index
 
@@ -128,7 +129,11 @@ def extract_dois(res_text: str) -> List[str]:
     return dois
 
 
-def scrape_version_metadata(doi: str, conn: HTTPSConnection, dans_cfg: dict) -> Optional[dict]:
+def scrape_version_metadata(
+        doi: str,
+        conn: HTTPSConnection,
+        dans_cfg: CommentedMap
+) -> Optional[dict[str, list[dict[str, int]]]]:
     """
     Extracts a list of original filenames and a deposit date for a dataset designated by `doi`
 
@@ -158,7 +163,7 @@ def scrape_version_metadata(doi: str, conn: HTTPSConnection, dans_cfg: dict) -> 
     url = root_url + versions_subpath.format(doi=doi)
     versions = json.loads(get(url, conn))
 
-    return versions
+    return dict(versions)
 
 
 if __name__ == '__main__':

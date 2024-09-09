@@ -8,6 +8,7 @@ from urllib.parse import quote_plus
 
 import numpy as np
 from matplotlib import pyplot as plt
+from ruamel.yaml import CommentedMap
 from sklearn.linear_model import LinearRegression
 
 from models import BassDiffusionModel
@@ -226,7 +227,15 @@ def add_cumulative_counts(counts: SortedFileCount, format: str) -> SortedFileCou
     return counts
 
 
-def plot_counts(counts: SortedFileCount, cfg: dict) -> None:
+def plot_counts(counts: SortedFileCount, cfg: CommentedMap) -> None:
+    """
+    Plot `counts` following the configuration passed in `cfg`
+
+    :param counts: A dict containing time intervals and file counts for the intervals
+    :param cfg: A configuration section, one under "data" in config.yaml
+
+    :return: None
+    """
     output_dir = cfg['img_output_dir']
     num_tests = cfg['num_test_measurements']
 
